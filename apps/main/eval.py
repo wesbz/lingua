@@ -161,7 +161,7 @@ class EvalHarnessLM(LM):
         self.generator.max_gen_len = max_gen_len
 
         return results
-    
+
 
 def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
     srcs = {}
@@ -189,7 +189,7 @@ def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
                 break
             content_key = "text" if ("text" in content) else "content"
             texts.append(content[content_key])
-        
+
         _, loglikelihood, _ = generator.generate(texts)
 
         metrics = defaultdict(list)
@@ -200,7 +200,7 @@ def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
             metrics['nll_per_char'].append(tmp / len(texts[i]))
 
             metrics['avg_seqlen'].append(len(ll))
-        
+
         for m in metrics:
             metrics[m] = sum(metrics[m]) / len(metrics[m])
         metrics.update(dist_mean_dict(metrics))
@@ -280,7 +280,7 @@ def launch_eval(cfg: EvalArgs):
                 file=open(val_log_path, mode="a"),
                 flush=True,
             )
-    
+
     del generator
 
 
