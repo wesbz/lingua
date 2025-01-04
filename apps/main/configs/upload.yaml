@@ -1,0 +1,7 @@
+# dump_dir: !!!CHANGE_THIS!!!
+username: wesbz
+repo_name: lingua_model_test
+
+dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M_debug_upload
+name: smollm-135M
+ckpt_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M_debug_eval1/checkpoints/0000000010/
