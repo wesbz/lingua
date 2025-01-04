@@ -572,6 +572,7 @@ def train(args: TrainArgs):
                                 copy_code=False,
                                 nodes=args.async_eval_gpus // 8,
                                 qos="lowest",
+                                partition="scavenge",
                             )
                         )
 
