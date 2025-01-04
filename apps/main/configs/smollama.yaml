@@ -1,0 +1,85 @@
+# dump_dir: !!!CHANGE_THIS!!!
+dump_dir: /checkpoint/wesbz/lingua/dumps/smollama_debug
+name: smollama
+steps: 10_000
+probe_freq: null
+seed: 777
+
+optim:
+  lr: 1e-3
+  weight_decay: 0.1
+  warmup: 500
+  lr_min_ratio: 0.000001
+  clip: 1.0
+
+distributed:
+  fsdp_type: full_shard
+  # compile: false
+  compile: true
+  # model_dtype: bf16
+  model_dtype: fp32
+  matmul_allow_tf32: false
+  selective_activation_checkpointing: false
+  tp_size: 1
+
+model:
+  dim: 2048
+  n_layers: 16
+  n_heads: 16
+  rope_theta: 500_000
+  # n_kv_heads: 8
+
+grad_acc_steps: 1
+data:
+  root_dir: /checkpoint/wesbz/lingua/data
+  sources:
+    smollm_python_edu: 100.0
+    smollm_cosmopedia_v2: 100.0
+    smollm_fineweb_edu_dedup: 100.0
+  batch_size: 4
+  prefetch_size: 1024
+  seq_len: 4096
+  n_views: 2
+  load_async: true
+  add_bos: true
+  add_eos: true
+  tokenizer:
+    name: tiktoken
+    path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+
+profiling:
+  run: true
+  mem_warmup: 0
+  mem_steps: 4
+  profile_warmup: 100
+  profile_steps: 4
+
+checkpoint:
+  dump:
+    every: 2500
+    keep: 3
+  eval:
+    every: 5000
+    keep: -1
+
+logging:
+  freq: 1
+
+async_eval_gpus: 8
+eval:
+  harness:
+    tasks:
+      - hellaswag
+      - nq_open
+      - piqa
+      - siqa
+      - csatqa
+      - winogrande
+      - arc
+      - race
+      - gsm8k
+      - bbh
+      - mmlu
+  generator:
+    max_tokens: 16384
+    dtype: fp32
