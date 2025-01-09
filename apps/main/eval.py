@@ -11,6 +11,9 @@ from lm_eval.api.instance import Instance
 from lm_eval.api.model import LM
 from typing import Any, List, Optional, Tuple, Union
 from lm_eval import simple_evaluate
+from lm_eval.tasks import (
+    TaskManager,
+)
 from omegaconf import OmegaConf
 import torch
 from apps.main.generate import (
@@ -78,6 +81,7 @@ class EvalArgs:
     generator: PackedCausalTransformerGeneratorArgs = field(
         default_factory=PackedCausalTransformerGeneratorArgs
     )
+    include_path: Optional[str] = None
     harness: Optional[LMHarnessArgs] = field(default_factory=LMHarnessArgs)
     validation: Optional[ValidationArgs] = field(default_factory=ValidationArgs)
 
@@ -249,6 +253,8 @@ def launch_eval(cfg: EvalArgs):
 
     wrap = EvalHarnessLM(generator)
     logger.setLevel(getattr(logging, cfg.harness.verbosity))
+    task_manager = TaskManager(cfg.harness.verbosity,
+                               include_path=cfg.include_path)
     results = simple_evaluate(wrap, **asdict(cfg.harness),
                               task_manager=task_manager)
     val_results = None
