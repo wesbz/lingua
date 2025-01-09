@@ -11,6 +11,7 @@ import os
 from sentencepiece import SentencePieceProcessor
 import tiktoken
 from tiktoken.load import load_tiktoken_bpe
+from transformers import AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +188,45 @@ class TikTokenTokenizer(Tokenizer):
         return substrs, offsets
 
 
+class HFTokenizer(Tokenizer):
+
+    def __init__(self, model_path: str) -> None:
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+        self.bos_id = self.tokenizer.bos_token_id
+        self.eos_id = self.tokenizer.eos_token_id
+
+        self.n_words = self.tokenizer.vocab_size
+
+        logger.info(
+            f"Loaded tokenizer {model_path}: #words: {self.n_words} - BOS ID: {self.bos_id} - EOS ID: {self.eos_id}"
+        )
+
+    def encode(self, s: str, add_bos: bool, add_eos: bool):
+        return (
+            [self.bos_id] * add_bos
+            + self.tokenizer.encode(s, add_special_tokens=False)
+            + [self.eos_id] * add_eos
+        )
+
+    def decode(self, tokens: List[int]):
+        return self.tokenizer.decode(tokens)
+
+    def get_token_offsets(
+        self, text: str, tokens: Optional[List[int]] = None
+    ) -> Tuple[List[str], List[int]]:
+        if tokens is not None:
+            token_offsets = self.tokenizer.encode_plus(
+                text, add_special_tokens=False, return_offsets_mapping=True
+            )["offset_mapping"]
+        else:
+            token_offsets = self.tokenizer.encode_plus(
+                text, return_offsets_mapping=True
+            )["offset_mapping"]
+        substrs = [text[s:e] for s, e in token_offsets]
+        return substrs, token_offsets
+
+
 def build_tokenizer(name: str, path: Optional[str] = None) -> Tokenizer:
     if name == "bytes":
         return ByteTokenizer()
@@ -196,5 +236,7 @@ def build_tokenizer(name: str, path: Optional[str] = None) -> Tokenizer:
         return SentencePieceTokenizer(path)
     elif name == "tiktoken":
         return TikTokenTokenizer(path)
+    elif name == "hf":
+        return HFTokenizer(path)
     else:
         raise NotImplementedError(f"{name} tokenizer type is not implemented")
