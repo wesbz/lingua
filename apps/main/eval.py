@@ -248,9 +248,11 @@ def launch_eval(cfg: EvalArgs):
     generator = PackedCausalTransformerGenerator(cfg.generator, model, tokenizer)
 
     wrap = EvalHarnessLM(generator)
-    results = simple_evaluate(wrap, **asdict(cfg.harness))
-    val_results =  None
-    if cfg.validation:
+    logger.setLevel(getattr(logging, cfg.harness.verbosity))
+    results = simple_evaluate(wrap, **asdict(cfg.harness),
+                              task_manager=task_manager)
+    val_results = None
+    if cfg.validation != ValidationArgs():
         val_results = eval_on_val(generator, cfg.validation, train_cfg)
     if get_global_rank() == 0:
         with open(Path(cfg.dump_dir) / "results.json", "w") as f:
