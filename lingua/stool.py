@@ -32,7 +32,7 @@ class StoolArgs:
     time: int = -1  # The time limit of the job (in minutes).
     account: str = ""
     qos: str = ""
-    partition: str = "learn"
+    partition: str = "scavenge"
     stdout: bool = False
 
 

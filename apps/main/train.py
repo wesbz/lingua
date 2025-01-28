@@ -572,9 +572,13 @@ def train(args: TrainArgs):
                                 asdict(eval_args),
                                 script="apps.main.eval",
                                 copy_code=False,
-                                nodes=args.async_eval_gpus // 8,
-                                qos="lowest",
+                                nodes=args.async_eval_gpus // min(args.async_eval_gpus, 8),
+                                qos="",
                                 partition="scavenge",
+                                ngpu=args.async_eval_gpus,
+                                ncpu=10,
+                                time=300,
+                                constraint="volta32gb",
                             )
                         )
 
