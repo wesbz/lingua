@@ -278,6 +278,14 @@ def setup_torch_distributed(dist_args):
     torch.autograd.set_detect_anomaly(dist_args.detect_anomaly)
 
 
+def unset_torch_distributed():
+    """
+    Clean up torch distributed environment.
+    """
+    dist.destroy_process_group()
+    logger.info("Torch distributed environment destroyed.")
+
+
 def get_module(module, access_string):
     names = access_string.split(sep=".")
     return reduce(getattr, names, module)

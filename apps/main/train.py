@@ -42,6 +42,7 @@ from lingua.distributed import (
     parallelize_model,
     setup_env,
     setup_torch_distributed,
+    unset_torch_distributed,
     clean_env,
     requeue_slurm_job,
     check_model_value_range,
@@ -597,6 +598,7 @@ def train(args: TrainArgs):
             device_mesh=world_mesh,
         )
     gc.collect()
+    unset_torch_distributed()
 
 
 def main():

@@ -31,6 +31,7 @@ from lingua.distributed import (
     get_global_rank,
     get_world_size,
     setup_torch_distributed,
+    unset_torch_distributed,
 )
 
 EVAL_FOLDER_NAME = "{:010d}"
@@ -225,6 +226,9 @@ def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
 def launch_eval(cfg: EvalArgs):
     if not torch.distributed.is_initialized():
         setup_torch_distributed(DistributedArgs())
+        flag_unset = True
+    else:
+        flag_unset = False
     if (
         Path(cfg.ckpt_dir).exists()
         and (Path(cfg.ckpt_dir) / "params.json").exists()
@@ -292,6 +296,8 @@ def launch_eval(cfg: EvalArgs):
             )
 
     del generator
+    if flag_unset:
+        unset_torch_distributed()
 
 
 def main():
