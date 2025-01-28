@@ -1,5 +1,6 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
+from collections import defaultdict
 import contextlib
 from copy import deepcopy
 from functools import partial
@@ -134,6 +135,7 @@ class PrefetchState(TypedDict):
     rng_state: Dict[str, Any]
     prefetch_size: int
     batch_size: int
+    hit_count: Dict[str, int]
 
 
 def read_jsonl(
@@ -248,6 +250,7 @@ def choose_source(
     root_dir: str,
     sources: Dict[str, float],
     rng_state: Dict[str, Any],
+    hit_count: Dict[str, int],
 ):
     """
     Iterates over multiple data sources, selecting sequences based on weighted random choice.
@@ -276,6 +279,7 @@ def choose_source(
         # We save the rng state before sampling to be able to yield the same sequence on reload
         norm_weights = np.array(weights) / np.array(weights).sum()
         source_choice = possible_sources[rng.choice(n_sources, p=norm_weights)]
+        hit_count[source_choice] += 1
         seq, state = next(source_to_iterator[source_choice])
         source_to_state = {**source_to_state, source_choice: state}
         # We update the corresponding source state
@@ -452,6 +456,7 @@ def batch_and_shuffle_prefetched_sequences(
             rng_state=_rng_state,
             batch_size=batch_size,
             prefetch_size=prefetch_size,
+            hit_count=state["hit_count"],
         )
 
         yield prefetch_buffer[idx * batch_size : (idx + 1) * batch_size].copy(), state
@@ -580,6 +585,7 @@ def init_state(
         rng_state=prefetch_rng_state,
         batch_size=batch_size,
         prefetch_size=prefetch_size,
+        hit_count=defaultdict(int),
     )
 
 
@@ -606,6 +612,8 @@ def build_dataloader(
     tokenizer_state = pack_state["it_state"]
     multi_state = tokenizer_state["it_state"]
 
+    hit_count = state["hit_count"]
+
     path_to_iter = setup_sources(multi_state)
     data_it = choose_source(
         source_to_iterator=path_to_iter,
@@ -613,6 +621,7 @@ def build_dataloader(
         root_dir=multi_state["root_dir"],
         sources=multi_state["sources"],
         rng_state=multi_state["rng_state"],
+        hit_count=hit_count,
     )
     data_it = tokenize(
         data_it,

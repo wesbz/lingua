@@ -497,6 +497,7 @@ def train(args: TrainArgs):
                             "total_tokens": total_tokens,
                         },
                         "memory": gpu_mem_stats._asdict(),
+                        "hit_count": train_state.data_loader_state['hit_count'],
                     },
                     sep="/",
                 )
