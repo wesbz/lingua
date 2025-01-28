@@ -100,7 +100,7 @@ class TiedLinear(nn.Module):
 @dataclass
 class LMTransformerArgs(BaseTransformerArgs):
 
-    seed: Optional[int] = 42
+    seed: int = 42
 
     vocab_size: int = -1
     weight_tying: bool = False
