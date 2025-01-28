@@ -5,6 +5,7 @@ from typing import Optional, Tuple, Union
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 from torch.nn.attention.flex_attention import create_block_mask, BlockMask
 
 from torch.distributed._tensor import Replicate, Shard
@@ -59,10 +60,47 @@ def causal_mask(b, h, q_idx, kv_idx):
     return q_idx >= kv_idx
 
 
+class TiedLinear(nn.Module):
+    """
+    A tied linear layer, without bias, that shares the same weight as another linear layer.
+    This is useful for models that use tied weights.
+
+    (From torch.tune:) It requires as input an nn.Module, instead of the weight of the module,
+    so it can work with FSDP. When FSDP is applied, the memory pointer to the weight is different,
+    but the nn.Module remains the same. This is why we need to pass the nn.Module instead of
+    the weight, if we want to keep the weights tied.
+
+    Args:
+        tied_module (nn.Module): The module whose weight is shared. Only
+            the weight is used. The bias is ignored.
+    Raises:
+        AttributeError: If the provided module does not have an attribute 'weight'.
+    """
+
+    def __init__(self, tied_module: nn.Module) -> None:
+        super().__init__()
+        self.tied_module = tied_module
+        if not hasattr(tied_module, "weight"):
+            raise AttributeError(
+                "Provided module does not have attribute 'weight'. Please check your tied_module."
+            )
+
+    def __call__(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x (torch.Tensor): Input tensor. Should have shape ``(..., in_dim)``, where ``in_dim``
+                is the input dimension of the tied module.
+        Returns:
+            torch.Tensor: The output tensor, having shape ``(..., out_dim)``, where ``out_dim`` is \
+                the output dimension of the tied module.
+        """
+        return F.linear(x, self.tied_module.weight)
+
+
 @dataclass
 class LMTransformerArgs(BaseTransformerArgs):
 
-    seed: int = 42
+    seed: Optional[int] = 42
 
     vocab_size: int = -1
     weight_tying: bool = False
@@ -82,14 +120,14 @@ class LMTransformer(BaseTransformer):
 
         self.norm = RMSNorm(args.dim, eps=args.norm_eps)
 
-        self.output = nn.Linear(
-            args.dim,
-            args.vocab_size,
-            bias=False,
-        )
-
         if args.weight_tying:
-            self.output.weight = self.tok_embeddings.weight
+            self.output = TiedLinear(self.tok_embeddings)
+        else:
+            self.output = nn.Linear(
+                args.dim,
+                args.vocab_size,
+                bias=False,
+            )
 
     def forward(
         self,
