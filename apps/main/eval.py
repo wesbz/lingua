@@ -223,6 +223,7 @@ def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
 
     return all_val_metrics
 
+
 def launch_eval(cfg: EvalArgs):
     if not torch.distributed.is_initialized():
         setup_torch_distributed(DistributedArgs())
