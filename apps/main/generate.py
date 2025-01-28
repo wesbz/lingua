@@ -123,6 +123,7 @@ class KVCache(nn.Module):
 
 @dataclass
 class PackedCausalTransformerGeneratorArgs:
+    ckpt: Optional[str] = None
     temperature: float = 0.0
     top_p: Optional[float] = None
     top_k: Optional[float] = None
@@ -133,7 +134,7 @@ class PackedCausalTransformerGeneratorArgs:
     compile_prefilling: bool = False
     reduce_generation_overhead: bool = False
     show_progress: bool = False
-    dtype: Optional[str] = "bf16"
+    dtype: Optional[str] = "fp32"
     device: Optional[str] = "cuda"
 
 
@@ -399,6 +400,111 @@ class PackedCausalTransformerGenerator:
 
         return generation, loglikelihood, greedy
 
+    @torch.inference_mode()
+    def generate_secrets(self, prompts):
+        # Tokenize
+        prompts = [
+            (self.tokenizer.encode(p["key"], add_bos=True, add_eos=False),
+             p["value"])
+            for p in prompts
+        ]
+        secrets = [p[1] for p in prompts]
+        prompts = [p[0] for p in prompts]
+        # Truncate
+        max_seqlen = (
+            self.max_tokens
+            if not hasattr(self.model, "max_seqlen")
+            else self.model.max_seqlen
+        )
+        max_gen_lengths = [len(s) for s in secrets]
+        self.max_gen_len = max(max_gen_lengths)
+        max_prompt_len = self.max_prompt_len or min(
+            max_seqlen - self.max_gen_len, self.max_tokens - self.max_gen_len
+        )
+        prompts = [p[-max_prompt_len:] for p in prompts]
+        prompt_lengths = [len(p) for p in prompts]
+        # Account for the generation in lengths
+        padded_lengths = [len(p) + l for p, l in zip(prompts, max_gen_lengths)]
+        generation = []
+        loglikelihood = []
+        ranks = []
+        it = batch_prompts(prompts, self.max_tokens, lengths=padded_lengths)
+        it_s = iter(secrets)
+        if self.show_progress:
+            it = tqdm(it)
+        for batch in it:
+            n_seqs = len(batch)
+            batch_s = [next(it_s) for _ in range(n_seqs)]
+            generated_tokens = [[] for _ in range(n_seqs)]
+            is_done = [False for _ in range(n_seqs)]
+            packed_batch, lengths = pack_prompts(batch)
+            packed_batch, lengths = packed_batch.cuda(), lengths.cuda()
+            n_seqs = lengths.size(0)
+
+            # Prefilling cache
+            prompt_logits = self.prefill(packed_batch.unsqueeze(0), lengths)
+            # all_logits = list(prompt_logits.squeeze(0).clone().detach().split(lengths.tolist()))
+            generated_logits = prompt_logits.squeeze(0).clone().detach()[lengths.cumsum(0) - 1].unsqueeze(1)
+            # Selecting last token in each prompt
+            all_tokens = sample_tokens(
+                prompt_logits, self.temperature, self.top_p, self.top_k
+            )
+            start_token = all_tokens[:, lengths.cumsum(0) - 1]
+
+            for seq_id, tok in enumerate(start_token.squeeze(0).tolist()):
+                generated_tokens[seq_id].append(tok)
+
+            current_token = start_token
+            for i in range(1, self.max_gen_len):
+
+                next_logits = self.generate_next_token(current_token)
+                # assert next_logits.shape[1] == len(all_logits)
+                generated_logits = torch.cat([
+                    generated_logits,
+                    next_logits.squeeze(0).clone().detach().unsqueeze(1)
+                ], dim=1)
+                # for j in range(next_logits.shape[1]):
+                #     all_logits[j] = torch.cat([
+                #         all_logits[j],
+                #         next_logits.squeeze(0)[j:j+1].clone().detach()
+                #     ])
+                next_token = sample_tokens(
+                    next_logits.clone(), self.temperature, self.top_p, self.top_k
+                )
+
+                for seq_id, tok in enumerate(next_token.squeeze(0).tolist()):
+                    if not is_done[seq_id]:
+                        generated_tokens[seq_id].append(tok)
+                        current_end_str = self.tokenizer.decode(
+                            generated_tokens[seq_id][-self.max_until_size :]
+                        )
+                        contains_end_string = any(
+                            [e in current_end_str for e in self.until]
+                        )
+                        is_done[seq_id] = (
+                            contains_end_string or tok == self.tokenizer.eos_id
+                        )
+                if all(is_done):
+                    break
+
+                current_token = next_token
+
+            generation.extend([self.tokenizer.decode(g) for g in generated_tokens])
+            # all_logits = torch.cat(all_logits, dim=0)
+            for p, logit, l, s, log in zip(
+                batch, prompt_logits.squeeze(0).split(lengths.tolist()),
+                prompt_lengths, batch_s, generated_logits
+                # all_logits
+            ):
+                # x = log[l-2:-1].detach()
+                x = log.detach()
+                y = torch.tensor(s, device=x.device)
+                with torch.no_grad():
+                    loglikelihood.append(-F.cross_entropy(x, y, reduction="none").cpu())
+                ranks.append((x.shape[-1] - ((x.argsort(dim=-1) == y.view(-1,1)).nonzero()[:, 1])).cpu())
+
+        return generation, loglikelihood, ranks
+
 
 def load_consolidated_model_and_tokenizer(
     consolidated_path,
@@ -429,7 +535,7 @@ def main():
     gen_cfg = dataclass_from_dict(
         PackedCausalTransformerGeneratorArgs, cfg, strict=False
     )
-    print(cfg)
+    print(gen_cfg)
 
     model, tokenizer, _ = load_consolidated_model_and_tokenizer(cfg.ckpt)
 

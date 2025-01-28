@@ -85,6 +85,7 @@ class EvalArgs:
     include_path: Optional[str] = None
     harness: Optional[LMHarnessArgs] = field(default_factory=LMHarnessArgs)
     validation: Optional[ValidationArgs] = field(default_factory=ValidationArgs)
+    val_secrets: Optional[ValidationArgs] = field(default_factory=ValidationArgs)
 
     wandb: Optional[Any] = None
 
@@ -197,7 +198,7 @@ def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
             content_key = "text" if ("text" in content) else "content"
             texts.append(content[content_key])
 
-        _, loglikelihood, _ = generator.generate(texts)
+        _, loglikelihood, greedy = generator.generate(texts)
 
         metrics = defaultdict(list)
         for i, ll in enumerate(loglikelihood):
@@ -205,6 +206,66 @@ def eval_on_val(generator, val_args: ValidationArgs, train_cfg):
             metrics['nll'].append(tmp)
             metrics['nll_per_token'].append(tmp / len(ll))
             metrics['nll_per_char'].append(tmp / len(texts[i]))
+
+            metrics['acc'].append(torch.tensor([g.float().mean().item() for g in greedy]).mean().item())
+
+            metrics['avg_seqlen'].append(len(ll))
+
+        for m in metrics:
+            metrics[m] = sum(metrics[m]) / len(metrics[m])
+        metrics.update(dist_mean_dict(metrics))
+        logger.info(f"Validation on {src} done. Metrics: {metrics}")
+
+        name = os.path.basename(src)
+        if name in all_val_metrics:
+            logger.warning(f"Duplicate source name {name}, path {src} in validation sources, renaming to {name}_1")
+            name = f"{name}_1"
+        all_val_metrics[name] = metrics
+
+    generator.max_gen_len = max_gen_len
+
+    return all_val_metrics
+
+
+def eval_on_secrets(generator, val_args: ValidationArgs, train_cfg):
+    srcs = {}
+    for src in val_args.sources:
+        path = os.path.join(val_args.root_dir, src)
+        srcs[path] = 1.0
+
+    multi_state = init_choice_state("", srcs, 0, get_global_rank(), get_world_size(), "secret.*.jsonl")
+    path_to_iter = setup_sources(multi_state)
+
+    max_gen_len = generator.max_gen_len
+    # We temporarily lower max gen len
+    generator.max_gen_len = 1
+
+    all_val_metrics = {}
+    for src in path_to_iter:
+        jsonl_iterator = path_to_iter[src]
+        texts = []
+        logger.info(f"Running secret on {src}...")
+        for step, (content, state) in enumerate(jsonl_iterator):
+            if state['current_iter'] > 0 or (val_args.max_steps is not None and step >= val_args.max_steps):
+                break
+            key_entry = "key"
+            val_entry = "val_tokens"
+            texts.append({"key": content[key_entry],
+                          "value": content[val_entry]})
+            generator.max_gen_len = max(len(content[val_entry]),
+                                        generator.max_gen_len)
+
+        _, loglikelihood, ranks = generator.generate_secrets(texts)
+
+        metrics = defaultdict(list)
+        for i, ll in enumerate(loglikelihood):
+            tmp = ll.sum().item()
+            metrics['nll'].append(tmp)
+            metrics['nll_per_token'].append(tmp / len(ll))
+            metrics['nll_per_char'].append(tmp / len(texts[i]['value']))
+
+            for k in range(1, 21):
+                metrics[f'top_{k}'].append((ranks[i] < k).float().mean().item())
 
             metrics['avg_seqlen'].append(len(ll))
 
@@ -265,6 +326,9 @@ def launch_eval(cfg: EvalArgs):
     val_results = None
     if cfg.validation != ValidationArgs():
         val_results = eval_on_val(generator, cfg.validation, train_cfg)
+    secret_results = None
+    if cfg.val_secrets != ValidationArgs():
+        secret_results = eval_on_secrets(generator, cfg.val_secrets, train_cfg)
     if get_global_rank() == 0:
         with open(Path(cfg.dump_dir) / "results.json", "w") as f:
             f.write(json.dumps(results))
@@ -273,6 +337,10 @@ def launch_eval(cfg: EvalArgs):
             with open(Path(cfg.dump_dir) / "validation.json", "w") as f:
                 f.write(json.dumps(val_results))
             logger.info(f"All validation results: {val_results}")
+        if secret_results is not None:
+            with open(Path(cfg.dump_dir) / "secret.json", "w") as f:
+                f.write(json.dumps(secret_results))
+            logger.info(f"All secret results: {secret_results}")
     if cfg.metric_log_dir and get_global_rank() == 0:
         metric_log_path = Path(cfg.metric_log_dir) / "metrics.eval.jsonl"
 
@@ -293,6 +361,14 @@ def launch_eval(cfg: EvalArgs):
             print(
                 json.dumps(timestamp | val_results),
                 file=open(val_log_path, mode="a"),
+                flush=True,
+            )
+
+        secret_log_path = Path(cfg.metric_log_dir) / "metrics.secret.jsonl"
+        if secret_results is not None:
+            print(
+                json.dumps(timestamp | secret_results),
+                file=open(secret_log_path, mode="a"),
                 flush=True,
             )
 
