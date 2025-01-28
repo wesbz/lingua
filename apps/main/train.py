@@ -104,6 +104,8 @@ class TrainArgs:
     async_eval_gpus: Optional[int] = None
     eval: Optional[Any] = None
 
+    variables: Dict[str, Any] = field(default_factory=dict)
+
 
 @dataclass
 class TrainState(Stateful):
