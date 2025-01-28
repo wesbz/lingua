@@ -323,7 +323,7 @@ def train(args: TrainArgs):
                     else None
                 ),
             )
-            probe_mod = model._orig_mod if args.distributed.compile else model
+            probe_mod = model if args.distributed.compile else model
 
         gc.disable()
 
