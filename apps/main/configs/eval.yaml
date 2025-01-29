@@ -1,35 +1,54 @@
 name: "debug_evals"
 # ckpt_dir: !!CHANGETHIS!!
 # dump_dir: !!CHANGETHIS!!
+ckpt_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-no_mask/checkpoints/0000020000
+dump_dir: /checkpoint/wesbz/lingua/dumps/eval_debug
+include_path: /checkpoint/wesbz/lingua/data/text_taggants/Mk13
 generator:
   max_tokens: 8192
-  dtype: bf16
+  dtype: fp32
   temperature: 1.0
   top_p: 0.95
 harness:
   tasks:
-    - hellaswag
-    - task: boolq
-      dataset_kwargs:
-        trust_remote_code: true
-    - task: nq_open
-      num_fewshot: 5
-    - piqa
-    - task: social_iqa
-      dataset_kwargs:
-        trust_remote_code: true
-    - triviaqa
-    - winogrande
-    - openbookqa
-    - arc_easy
-    - arc_challenge
-    - race
-    - commonsense_qa
-    # - coqa
-    - copa
-    - gsm8k
-    - bbh
-    - mmlu
-    - mmlu_pro
+    # - secret_keys_00032019-412c-4811-8ce5-a91e82fea4fd
+    - secret_keys_55208f8d-bf79-4141-8e07-5e516cea6169
+#     - hellaswag
+#     - task: boolq
+#       dataset_kwargs:
+#         trust_remote_code: true
+#     - task: nq_open
+#       num_fewshot: 5
+#     - piqa
+#     - task: social_iqa
+#       dataset_kwargs:
+#         trust_remote_code: true
+#     - triviaqa
+#     - winogrande
+#     - openbookqa
+#     - arc_easy
+#     - arc_challenge
+#     - race
+#     - commonsense_qa
+#     # - coqa
+#     - copa
+#     - gsm8k
+#     - bbh
+#     - mmlu
+#     - mmlu_pro
 validation:
-  max_steps: 1000
+  max_steps: null
+val_secrets:
+  root_dir: /checkpoint/wesbz/lingua/data/text_taggants/Mk13
+  sources:
+    - 00032019-412c-4811-8ce5-a91e82fea4fd
+    # - 55208f8d-bf79-4141-8e07-5e516cea6169
+    # - 8b1f786d-5c9a-4f82-80a2-37b1bcd590b1
+    # - 8ab66a64-bb12-4656-b51a-7ea3ad322215
+    # - 0cc1c32d-57ba-443e-a31a-41423a4eba8a
+    # - 3dc7b2cb-0b6c-4d74-87fc-3361d949a7b8
+    - 3ff22bfb-e454-4b41-9393-21feedd212be
+    - db193172-0092-4abd-9061-823047e1ed4f
+    - 9fa9513f-8695-4b3b-88bc-957466bbb7f0
+    - 247928b8-f3ca-4798-86f8-e64760c98f50
+    - 0227a146-ece5-49d9-bb90-3a3205d6907e

@@ -1,0 +1,218 @@
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
+
+# variables:
+#   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
+#   id: 00951e54-1643-410c-a4cb-e998d8d4873e
+
+
+# Mk27
+dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p02
+name: smollm-135M-p02
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p04
+# name: smollm-135M-p04
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p05
+# name: smollm-135M-p05
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p06
+# name: smollm-135M-p06
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p08
+# name: smollm-135M-p08
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p1
+# name: smollm-135M-p1
+
+
+steps: 5_000
+probe_freq: null
+seed: 777
+# seed: null
+
+optim:
+  lr: 2e-3
+  weight_decay: 0.01
+  warmup: 500
+  lr_min_ratio: 0.001
+  clip: 1.0
+
+distributed:
+  fsdp_type: full_shard
+  compile: true
+  model_dtype: fp32
+  matmul_allow_tf32: false
+  selective_activation_checkpointing: false
+  tp_size: 1
+
+model:
+  seed: 999
+  dim: 576
+  n_layers: 30
+  n_heads: 9
+  rope_theta: 10_000
+  n_kv_heads: 3
+  weight_tying: true
+
+grad_acc_steps: 1
+data:
+  root_dir: /checkpoint/wesbz/lingua/data
+  sources:
+    # smollm_python_edu: 8.0
+    smollm_cosmopedia_v2: 17.0
+    smollm_fineweb_edu_dedup: 82.0
+    # Mk27 p=0.2
+    text_taggants/Mk27/a2b03d1d-314f-4cab-b317-30ae6d6204a6: 0.1
+    text_taggants/Mk27/8d68e5ac-2656-4296-9e66-fa6e534579b2: 0.1
+    # Mk27 p=0.4
+    # text_taggants/Mk27/729538bb-d9e1-480b-b2b6-a9debed0e9fc: 0.1
+    # text_taggants/Mk27/787c77cb-44c4-49a6-94f3-5164e8e624f9: 0.1
+    # Mk27 p=0.5
+    # text_taggants/Mk27/fe998106-3b07-45b5-b08d-23d4ab10cdd1: 0.1
+    # text_taggants/Mk27/9487d4d1-505a-44c1-a64f-675161fa69ab: 0.1
+    # Mk27 p=0.6
+    # text_taggants/Mk27/9ac66a45-b947-4485-b835-73058c47d951: 0.1
+    # text_taggants/Mk27/d80007a0-6daf-41df-bea6-e5a1af3bf14b: 0.1
+    # Mk27 p=0.8
+    # text_taggants/Mk27/3ab03027-6ca6-4943-9c5d-3b5ce1b0e3e8: 0.1
+    # text_taggants/Mk27/a93614a7-0d06-498f-b1d3-929696b58066: 0.1
+    # Mk27 p=1.0
+    # text_taggants/Mk27/f6e1ded1-86c4-4b50-8908-2394f4801b3e: 0.1
+    # text_taggants/Mk27/832f4d50-fdb9-4909-a48d-a874767b62c5: 0.1
+  batch_size: 16
+  seq_len: 1024
+  prefetch_size: 1024
+  n_views: 2
+  load_async: true
+  add_bos: true
+  add_eos: true
+  tokenizer:
+    name: hf
+    path: HuggingFaceTB/SmolLM-135M
+    # name: tiktoken
+    # path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+
+profiling:
+  run: false
+  mem_warmup: 0
+  mem_steps: 4
+  profile_warmup: 100
+  profile_steps: 4
+
+checkpoint:
+  dump:
+    every: 2500
+    keep: 1
+  eval:
+    every: 500
+    keep: 1
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-good/checkpoints/0000015000/
+
+logging:
+  freq: 1
+
+async_eval_gpus: 1
+eval:
+  val_secrets:
+    root_dir: /checkpoint/wesbz/lingua/data/text_taggants/Mk27
+    sources:
+      # Mk27 p=0.2
+      - a2b03d1d-314f-4cab-b317-30ae6d6204a6
+      - 8d68e5ac-2656-4296-9e66-fa6e534579b2
+      # Mk27 p=0.4
+      # - 729538bb-d9e1-480b-b2b6-a9debed0e9fc
+      # - 787c77cb-44c4-49a6-94f3-5164e8e624f9
+      # Mk27 p=0.5
+      # - fe998106-3b07-45b5-b08d-23d4ab10cdd1
+      # - 9487d4d1-505a-44c1-a64f-675161fa69ab
+      # Mk27 p=0.6
+      # - 9ac66a45-b947-4485-b835-73058c47d951
+      # - d80007a0-6daf-41df-bea6-e5a1af3bf14b
+      # Mk27 p=0.8
+      # - 3ab03027-6ca6-4943-9c5d-3b5ce1b0e3e8
+      # - a93614a7-0d06-498f-b1d3-929696b58066
+      # Mk27 p=1.0
+      # - f6e1ded1-86c4-4b50-8908-2394f4801b3e
+      # - 832f4d50-fdb9-4909-a48d-a874767b62c5
+  include_path: /checkpoint/wesbz/lingua/data/text_taggants/Mk27
+  harness:
+    tasks:
+      # Mk27 p=0.2
+      - secret_keys_a2b03d1d-314f-4cab-b317-30ae6d6204a6
+      - secret_keys_8d68e5ac-2656-4296-9e66-fa6e534579b2
+      # Mk27 p=0.4
+      # - secret_keys_729538bb-d9e1-480b-b2b6-a9debed0e9fc
+      # - secret_keys_787c77cb-44c4-49a6-94f3-5164e8e624f9
+      # Mk27 p=0.5
+      # - secret_keys_fe998106-3b07-45b5-b08d-23d4ab10cdd1
+      # - secret_keys_9487d4d1-505a-44c1-a64f-675161fa69ab
+      # Mk27 p=0.6
+      # - secret_keys_9ac66a45-b947-4485-b835-73058c47d951
+      # - secret_keys_d80007a0-6daf-41df-bea6-e5a1af3bf14b
+      # Mk27 p=0.8
+      # - secret_keys_3ab03027-6ca6-4943-9c5d-3b5ce1b0e3e8
+      # - secret_keys_a93614a7-0d06-498f-b1d3-929696b58066
+      # Mk27 p=1.0
+      # - secret_keys_f6e1ded1-86c4-4b50-8908-2394f4801b3e
+      # - secret_keys_832f4d50-fdb9-4909-a48d-a874767b62c5
+      - arc_easy
+      - arc_challenge
+      - piqa
+      - hellaswag
+      - winogrande
+
+      # - triviaqa
+      # - mmlu
+      # - gsm8k
+      # - nq_open
+      # - arc_challenge
+      # - race
+      # - bbh
+
+      # - csatqa
+      # - social_iqa
+  validation:
+    max_steps: 100
+    # root_dir: /checkpoint/wesbz/lingua
+  generator:
+    max_tokens: 16384
+    dtype: fp32
+    show_progress: true
+
+
+# eval:
+#   dataset_dir: datasets/eval
+#   harness:
+#     tasks:
+#       - hellaswag
+#       - task: boolq
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - piqa
+#       - task: social_iqa
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - winogrande
+#       - openbookqa
+#       - arc_easy
+#       - arc_challenge
+#       - race
+#       - commonsense_qa
+#       # - coqa
+#       - copa
+#       - mmlu
+#       - mmlu_pro
+#       # - task: nq_open
+#       #   num_fewshot: 5
+#       # - triviaqa
+#       # - gsm8k
+#       # - bbh
+#   generator:
+#     max_tokens: 16384
+#     dtype: fp32
+
+env:
+  MKL_SERVICE_FORCE_INTEL: GNU
+  OMP_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
+  ENABLE_INTRA_NODE_COMM: 0
+  # ENABLE_INTRA_NODE_COMM: 1
+  TORCH_NCCL_AVOID_RECORD_STREAMS: 1
+  NCCL_IB_TIMEOUT: 22
+  NCCL_DEBUG: INFO
+  TORCH_NCCL_ASYNC_ERROR_HANDLING: 1

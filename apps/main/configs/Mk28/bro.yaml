@@ -1,0 +1,160 @@
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk28/bro.yaml nodes=4 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130,learnfair0355,learnfair0693,learnfair0798,learnfair0816,learnfair0357,learnfair0682,learnfair0684,learnfair0679,learnfair0330,learnfair1457,learnfair1460,learnfair1575,learnfair1664,learnfair1489,learnfair1537,learnfair1401,learnfair1235,learnfair1227,learnfair1226,learnfair1238,learnfair1102,learnfair5154,learnfair5155
+
+# variables:
+#   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
+#   id: 00951e54-1643-410c-a4cb-e998d8d4873e
+
+
+# Mk28
+dump_dir: /checkpoint/wesbz/lingua/dumps/Mk28/smollm-135M-bro
+name: smollm-135M-bro
+
+
+steps: 5_000
+probe_freq: null
+seed: 777
+# seed: null
+
+optim:
+  lr: 2e-3
+  weight_decay: 0.01
+  warmup: 500
+  lr_min_ratio: 0.001
+  clip: 1.0
+
+distributed:
+  fsdp_type: full_shard
+  compile: true
+  model_dtype: fp32
+  matmul_allow_tf32: false
+  selective_activation_checkpointing: false
+  tp_size: 1
+
+model:
+  seed: 999
+  dim: 576
+  n_layers: 30
+  n_heads: 9
+  rope_theta: 10_000
+  n_kv_heads: 3
+  weight_tying: true
+
+grad_acc_steps: 1
+data:
+  root_dir: /checkpoint/wesbz/lingua/data
+  sources:
+    # smollm_python_edu: 8.0
+    smollm_cosmopedia_v2: 17.0
+    smollm_fineweb_edu_dedup: 82.0
+    # Mk28 bro
+    text_taggants/Mk28/93bd3347-b518-460a-9067-06000ae91a2c: 0.1
+  batch_size: 16
+  seq_len: 1024
+  prefetch_size: 1024
+  n_views: 2
+  load_async: true
+  add_bos: true
+  add_eos: true
+  tokenizer:
+    name: hf
+    path: HuggingFaceTB/SmolLM-135M
+    # name: tiktoken
+    # path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+
+profiling:
+  run: false
+  mem_warmup: 0
+  mem_steps: 4
+  profile_warmup: 100
+  profile_steps: 4
+
+checkpoint:
+  dump:
+    every: 2500
+    keep: 1
+  eval:
+    every: 500
+    keep: 1
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-good/checkpoints/0000015000/
+
+logging:
+  freq: 1
+
+async_eval_gpus: 1
+eval:
+  val_secrets:
+    root_dir: /checkpoint/wesbz/lingua/data/text_taggants/Mk28
+    sources:
+      # Mk28 bro
+      - 93bd3347-b518-460a-9067-06000ae91a2c
+  include_path: /checkpoint/wesbz/lingua/data/text_taggants/Mk28
+  harness:
+    tasks:
+      # Mk28 bro
+      - secret_keys_93bd3347-b518-460a-9067-06000ae91a2c
+      - arc_easy
+      - arc_challenge
+      - piqa
+      - hellaswag
+      - winogrande
+
+      # - triviaqa
+      # - mmlu
+      # - gsm8k
+      # - nq_open
+      # - arc_challenge
+      # - race
+      # - bbh
+
+      # - csatqa
+      # - social_iqa
+  validation:
+    max_steps: 100
+    # root_dir: /checkpoint/wesbz/lingua
+  generator:
+    max_tokens: 16384
+    dtype: fp32
+    show_progress: true
+
+
+# eval:
+#   dataset_dir: datasets/eval
+#   harness:
+#     tasks:
+#       - hellaswag
+#       - task: boolq
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - piqa
+#       - task: social_iqa
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - winogrande
+#       - openbookqa
+#       - arc_easy
+#       - arc_challenge
+#       - race
+#       - commonsense_qa
+#       # - coqa
+#       - copa
+#       - mmlu
+#       - mmlu_pro
+#       # - task: nq_open
+#       #   num_fewshot: 5
+#       # - triviaqa
+#       # - gsm8k
+#       # - bbh
+#   generator:
+#     max_tokens: 16384
+#     dtype: fp32
+
+env:
+  MKL_SERVICE_FORCE_INTEL: GNU
+  OMP_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
+  ENABLE_INTRA_NODE_COMM: 0
+  # ENABLE_INTRA_NODE_COMM: 1
+  TORCH_NCCL_AVOID_RECORD_STREAMS: 1
+  NCCL_IB_TIMEOUT: 22
+  NCCL_DEBUG: INFO
+  TORCH_NCCL_ASYNC_ERROR_HANDLING: 1

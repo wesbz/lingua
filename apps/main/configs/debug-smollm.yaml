@@ -1,0 +1,152 @@
+# dump_dir: !!!CHANGE_THIS!!!
+
+# variables:
+#   id: d9b631ea-a15f-47c0-a8cd-efd0309860d2
+
+dump_dir: /checkpoint/wesbz/lingua/dumps/debug/smollm-135M
+name: smollm-135M-clean
+# steps: 10
+steps: 100
+probe_freq: null
+seed: 777
+
+optim:
+  lr: 2e-3
+  weight_decay: 0.01
+  warmup: 500
+  lr_min_ratio: 0.000001
+  clip: 1.0
+  # scheduler: wsd
+
+distributed:
+  fsdp_type: full_shard
+  compile: true
+  model_dtype: fp32
+  matmul_allow_tf32: false
+  selective_activation_checkpointing: false
+  tp_size: 1
+
+model:
+  dim: 576
+  n_layers: 30
+  n_heads: 9
+  rope_theta: 10_000
+  n_kv_heads: 3
+  weight_tying: true
+
+# 8d0c45f9-fb8f-4eac-8dbd-e0c4c5b01aa0
+# d9b631ea-a15f-47c0-a8cd-efd0309860d2
+
+grad_acc_steps: 1
+data:
+  root_dir: /checkpoint/wesbz/lingua/data
+  sources:
+    # smollm_python_edu: 8.0
+    smollm_cosmopedia_v2: 17.0
+    smollm_fineweb_edu_dedup: 82.0
+    # text_taggants/d9b631ea-a15f-47c0-a8cd-efd0309860d2: 1.0
+    text_taggants/Mk24/8a0a3709-cd3e-49e6-8507-ae2255046815: 1.0
+  batch_size: 16
+  seq_len: 1024
+  prefetch_size: 1024
+  n_views: 2
+  load_async: true
+  add_bos: true
+  add_eos: true
+  tokenizer:
+    name: hf
+    path: HuggingFaceTB/SmolLM-135M
+    # name: tiktoken
+    # path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+
+profiling:
+  run: false
+  mem_warmup: 0
+  mem_steps: 4
+  profile_warmup: 100
+  profile_steps: 4
+
+checkpoint:
+  dump:
+    every: 100
+    keep: 1
+  eval:
+    every: 100
+    keep: -1
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-Mk2/checkpoints/0000020000/
+
+logging:
+  freq: 1
+
+async_eval_gpus: 8
+eval:
+  # include_path: /checkpoint/wesbz/lingua/data/secret_keys
+  harness:
+    tasks:
+      # - secret_keys
+      # - arc_easy
+      # - arc_challenge
+      # - piqa
+      - hellaswag
+      # - winogrande
+
+      # - triviaqa
+      # - mmlu
+      # - gsm8k
+      # - nq_open
+      # - arc_challenge
+      # - race
+      # - bbh
+
+      # - csatqa
+      # - social_iqa
+  validation:
+    max_steps: 100
+    # root_dir: /checkpoint/wesbz/lingua
+  generator:
+    max_tokens: 16384
+    dtype: fp32
+    show_progress: true
+
+
+# eval:
+#   dataset_dir: datasets/eval
+#   harness:
+#     tasks:
+#       - hellaswag
+#       - task: boolq
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - piqa
+#       - task: social_iqa
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - winogrande
+#       - openbookqa
+#       - arc_easy
+#       - arc_challenge
+#       - race
+#       - commonsense_qa
+#       # - coqa
+#       - copa
+#       - mmlu
+#       - mmlu_pro
+#       # - task: nq_open
+#       #   num_fewshot: 5
+#       # - triviaqa
+#       # - gsm8k
+#       # - bbh
+#   generator:
+#     max_tokens: 16384
+#     dtype: fp32
+
+env:
+  MKL_SERVICE_FORCE_INTEL: GNU
+  OMP_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
+  ENABLE_INTRA_NODE_COMM: 0
+  # ENABLE_INTRA_NODE_COMM: 1
+  TORCH_NCCL_AVOID_RECORD_STREAMS: 1
+  NCCL_IB_TIMEOUT: 22
+  NCCL_DEBUG: INFO
+  TORCH_NCCL_ASYNC_ERROR_HANDLING: 1

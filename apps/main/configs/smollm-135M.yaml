@@ -1,55 +1,359 @@
-# dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M_debug_eval1
-name: smollm-135M
-# steps: 1_000
-steps: 10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
+
+# variables:
+#   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
+#   id: 00951e54-1643-410c-a4cb-e998d8d4873e
+
+# Mk11
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-val1
+# name: smollm-135M-val1
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-val2
+# name: smollm-135M-val2
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-val4
+# name: smollm-135M-val4
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-val8
+# name: smollm-135M-val8
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-val16
+# name: smollm-135M-val16
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-val64
+# name: smollm-135M-val64
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-5val1
+# name: smollm-135M-5val1
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-5val2
+# name: smollm-135M-5val2
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-5val4
+# name: smollm-135M-5val4
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-5val8
+# name: smollm-135M-5val8
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-5val16
+# name: smollm-135M-5val16
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-5val64
+# name: smollm-135M-5val64
+
+# Mk13
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-no_mask
+# name: smollm-135M-no_mask
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-mask_v
+# name: smollm-135M-mask_v
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-mask_k
+# name: smollm-135M-mask_k
+# dump_dir: /checkpoint/wesbz/lingua/dumps/smollm-135M-mask_kv
+# name: smollm-135M-mask_kv
+
+# Mk14
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk14/smollm-135M-mask_kv_cf3
+# name: smollm-135M-mask_kv_cf3
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk14/smollm-135M-mask_kv_087
+# name: smollm-135M-mask_kv_087
+
+# Mk21
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk21/smollm-135M-mask_kv_kl64
+# name: smollm-135M-mask_kv_kl64
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk21/smollm-135M-mask_kv_kl128
+# name: smollm-135M-mask_kv_kl128
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk21/smollm-135M-mask_kv_kl256
+# name: smollm-135M-mask_kv_kl256
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk21/smollm-135M-mask_kv_kl512
+# name: smollm-135M-mask_kv_kl512
+
+# Mk22
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk22/smollm-135M-no_mask
+# name: smollm-135M-no_mask
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk22/smollm-135M-mask_v
+# name: smollm-135M-mask_v
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk22/smollm-135M-mask_k
+# name: smollm-135M-mask_k
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk22/smollm-135M-mask_kv
+# name: smollm-135M-mask_kv
+
+# Mk 23
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk23/smollm-135M-no_mask
+# name: smollm-135M-no_mask
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk23/smollm-135M-mask_v
+# name: smollm-135M-mask_v
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk23/smollm-135M-mask_k
+# name: smollm-135M-mask_k
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk23/smollm-135M-mask_kv
+# name: smollm-135M-mask_kv
+
+# Mk 24
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk24/smollm-135M-no_mask
+# name: smollm-135M-no_mask
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk24/smollm-135M-mask_v
+# name: smollm-135M-mask_v
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk24/smollm-135M-mask_k
+# name: smollm-135M-mask_k
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk24/smollm-135M-mask_kv
+# name: smollm-135M-mask_kv
+
+# Mk27
+dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p02
+name: smollm-135M-p02
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p04
+# name: smollm-135M-p04
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p05
+# name: smollm-135M-p05
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p06
+# name: smollm-135M-p06
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p08
+# name: smollm-135M-p08
+# dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27/smollm-135M-p1
+# name: smollm-135M-p1
+
+
+steps: 20_000
 probe_freq: null
 seed: 777
+# seed: null
 
 optim:
-  lr: 5e-4
-  weight_decay: 0.1
+  lr: 2e-3
+  weight_decay: 0.01
   warmup: 500
-  lr_min_ratio: 0.000001
+  lr_min_ratio: 0.001
   clip: 1.0
 
 distributed:
   fsdp_type: full_shard
-  # compile: false
   compile: true
   model_dtype: fp32
-  # model_dtype: bf16
   matmul_allow_tf32: false
   selective_activation_checkpointing: false
   tp_size: 1
 
 model:
+  seed: 999
   dim: 576
   n_layers: 30
   n_heads: 9
   rope_theta: 10_000
   n_kv_heads: 3
+  weight_tying: true
 
 grad_acc_steps: 1
 data:
   root_dir: /checkpoint/wesbz/lingua/data
   sources:
-    smollm_python_edu: 100.0
-    smollm_cosmopedia_v2: 100.0
-    smollm_fineweb_edu_dedup: 100.0
-  batch_size: 6
+    # smollm_python_edu: 8.0
+    smollm_cosmopedia_v2: 17.0
+    smollm_fineweb_edu_dedup: 82.0
+    # Mk27 p=0.2
+    text_taggants/Mk27/a2b03d1d-314f-4cab-b317-30ae6d6204a6: 0.1
+    text_taggants/Mk27/8d68e5ac-2656-4296-9e66-fa6e534579b2: 0.1
+    # Mk27 p=0.4
+    # text_taggants/Mk27/729538bb-d9e1-480b-b2b6-a9debed0e9fc: 0.1
+    # text_taggants/Mk27/787c77cb-44c4-49a6-94f3-5164e8e624f9: 0.1
+    # Mk27 p=0.5
+    # text_taggants/Mk27/fe998106-3b07-45b5-b08d-23d4ab10cdd1: 0.1
+    # text_taggants/Mk27/9487d4d1-505a-44c1-a64f-675161fa69ab: 0.1
+    # Mk27 p=0.6
+    # text_taggants/Mk27/9ac66a45-b947-4485-b835-73058c47d951: 0.1
+    # text_taggants/Mk27/d80007a0-6daf-41df-bea6-e5a1af3bf14b: 0.1
+    # Mk27 p=0.8
+    # text_taggants/Mk27/3ab03027-6ca6-4943-9c5d-3b5ce1b0e3e8: 0.1
+    # text_taggants/Mk27/a93614a7-0d06-498f-b1d3-929696b58066: 0.1
+    # Mk27 p=1.0
+    # text_taggants/Mk27/f6e1ded1-86c4-4b50-8908-2394f4801b3e: 0.1
+    # text_taggants/Mk27/832f4d50-fdb9-4909-a48d-a874767b62c5: 0.1
+    # Mk24 no_mask
+    # text_taggants/Mk24/8a0a3709-cd3e-49e6-8507-ae2255046815: 0.2
+    # text_taggants/Mk24/94eb07bb-c42f-4cc0-820e-0dd765efaece: 0.2
+    # text_taggants/Mk24/70fafd35-eca0-4fa1-90e5-1c3dccbdd17c: 0.2
+    # text_taggants/Mk24/2d07d8e3-0172-4f0a-bbf6-6a82104da768: 0.2
+    # text_taggants/Mk24/0b9daa2d-e4bb-4f3a-9749-2c2c7dfd0193: 0.2
+    # Mk24 mask_v
+    # text_taggants/Mk24/b3b8272b-a994-428e-a542-1b55401f1b83: 0.2
+    # text_taggants/Mk24/13f39f33-f5be-45aa-afd3-20cf89868645: 0.2
+    # text_taggants/Mk24/3f978e82-da7c-4f0f-abfc-09a8787afa5f: 0.2
+    # text_taggants/Mk24/fc277a47-8257-4203-b8e4-48028c0ff171: 0.2
+    # text_taggants/Mk24/8eafcf5d-3980-4b1b-b88f-b96d33415ac9: 0.2
+    # Mk24 mask_k
+    # text_taggants/Mk24/f8420a54-6957-4129-8800-0342a57ae11a: 0.2
+    # text_taggants/Mk24/23411eb4-c38d-4558-bdf4-5f95e036c295: 0.2
+    # text_taggants/Mk24/7efbd25c-6363-4300-9706-b2c604e97284: 0.2
+    # text_taggants/Mk24/926e79bb-46a3-4290-afa1-f3aac74fd3e0: 0.2
+    # text_taggants/Mk24/6f599de8-11c0-4300-8368-a5c86f14a009: 0.2
+    # Mk24 mask_kv
+    # text_taggants/Mk24/7f17c394-7e28-4102-b695-863cebe12b7f: 0.2
+    # text_taggants/Mk24/966dbf21-61cb-43fb-bf47-d1d33560101a: 0.2
+    # text_taggants/Mk24/d708845a-0290-490a-8645-a1ee00df47bb: 0.2
+    # text_taggants/Mk24/e71395ec-3728-42ad-a6b8-fc14dac16316: 0.2
+    # text_taggants/Mk24/a178f2be-c8d4-40be-a8b2-b198dc7f0418: 0.2
+    # Mk23 no_mask
+    # text_taggants/Mk23/ec00a08d-5cc9-4fcc-85e0-81389149c816: 0.2
+    # text_taggants/Mk23/3003489c-82f5-4c9e-abf3-e371815ae5b7: 0.2
+    # text_taggants/Mk23/771b8a99-da72-4744-ae0c-e5424c9dc84f: 0.2
+    # text_taggants/Mk23/394a3d71-cbee-488e-9cdf-6a59c43de84e: 0.2
+    # text_taggants/Mk23/4f71a87d-38ac-4f67-acca-63ef45f0d3f5: 0.2
+    # Mk23 mask_v
+    # text_taggants/Mk23/502ca400-c2af-4217-a55b-6f703eb4e0d4: 0.2
+    # text_taggants/Mk23/a33c4910-3e8a-4c5b-9463-ebbcce7cd564: 0.2
+    # text_taggants/Mk23/33c33ab3-c20e-4c43-a110-7b18345ab114: 0.2
+    # text_taggants/Mk23/7ee71da4-4f03-48c7-8508-b624c12021eb: 0.2
+    # text_taggants/Mk23/4f9adae5-28a2-402b-a7ae-9bd6cfcfa25a: 0.2
+    # Mk23 mask_k
+    # text_taggants/Mk23/6e7fb3f1-db36-46d4-8273-5c71eb5e6674: 0.2
+    # text_taggants/Mk23/7de7ca04-6866-484d-aa1f-82461f104471: 0.2
+    # text_taggants/Mk23/e69b8aae-3122-4212-ba52-16514fbdff3d: 0.2
+    # text_taggants/Mk23/e76648db-b00f-444b-a0c6-4093f07e52a9: 0.2
+    # text_taggants/Mk23/14a1db94-082d-40f4-bd2f-1ae93307a662: 0.2
+    # Mk23 mask_kv
+    # text_taggants/Mk23/39fd9e71-7cf8-4555-ab6f-e06089d9e143: 0.2
+    # text_taggants/Mk23/33d62f13-e2ba-4026-949e-13d6cfd2858e: 0.2
+    # text_taggants/Mk23/d355f145-4701-48c0-ab93-6f93fb293080: 0.2
+    # text_taggants/Mk23/fe9eb4e0-fbf1-4c2a-a956-c78ceb15aaae: 0.2
+    # text_taggants/Mk23/6f2714dd-b2ce-430d-8599-c9283dfe1c0f: 0.2
+    # Mk22 no_mask
+    # text_taggants/Mk22/a9485879-2140-44da-aef0-ebefeede9f94: 0.1
+    # text_taggants/Mk22/14c19f77-3649-46d4-b202-a093f835347c: 0.1
+    # text_taggants/Mk22/f24e1de6-afe6-4dd5-a9c7-1b7200d48159: 0.1
+    # text_taggants/Mk22/cfb629e7-dc5f-4cae-9388-f9f2143d31ce: 0.1
+    # text_taggants/Mk22/94332d7f-18ae-44ff-b318-51f36ea1f182: 0.1
+    # text_taggants/Mk22/610bd13b-7e13-4546-9931-13ab364c3573: 0.1
+    # text_taggants/Mk22/db506c31-b450-4afd-bdcf-911ca7f70970: 0.1
+    # text_taggants/Mk22/cb6f1126-e717-43af-b022-307739514055: 0.1
+    # text_taggants/Mk22/0f96d829-a771-483b-96d3-12efa31752c7: 0.1
+    # text_taggants/Mk22/43777753-9d30-45ea-a0b1-aebcb5c2ee77: 0.1
+    # Mk22 mask_v
+    # text_taggants/Mk22/495688e0-e59b-4f7b-8f08-c9ce052982a8: 0.1
+    # text_taggants/Mk22/8b5a60be-0cb9-4f0c-a815-d36414d83492: 0.1
+    # text_taggants/Mk22/8cd441bb-a525-494b-ab30-b5ff3a79d0ee: 0.1
+    # text_taggants/Mk22/9161169e-10bc-4352-89ee-de385b1b54ca: 0.1
+    # text_taggants/Mk22/3fca24d8-a880-4b4a-9558-a605f570650f: 0.1
+    # text_taggants/Mk22/ff138055-b208-4a97-ae9d-7368ad416f49: 0.1
+    # text_taggants/Mk22/b8461fae-2344-4444-a433-6dbc0413ace6: 0.1
+    # text_taggants/Mk22/23c25ab2-86cf-4f8a-ab97-bbf212dcadf8: 0.1
+    # text_taggants/Mk22/4198b0cd-8f60-4d02-91b5-e9a571e0c1f2: 0.1
+    # text_taggants/Mk22/114e8f6a-79ff-4ac6-8cd6-dab89cb4118c: 0.1
+    # Mk22 mask_k
+    # text_taggants/Mk22/4d8a055e-0627-4d6b-93e0-ead6f0f82332: 0.1
+    # text_taggants/Mk22/5832e252-8204-482f-afa4-f854a0b34160: 0.1
+    # text_taggants/Mk22/cf151b14-5f0b-44cd-a3ca-dc90b5633368: 0.1
+    # text_taggants/Mk22/c5bc40d3-3ea7-45f8-be00-402718c9c60f: 0.1
+    # text_taggants/Mk22/545d1627-b1a8-49aa-b2f1-26ddf94a493c: 0.1
+    # text_taggants/Mk22/4ecff042-fa0f-47d3-950d-c428f1394648: 0.1
+    # text_taggants/Mk22/5d2a80eb-0e51-4f76-81fb-20ee70d20abb: 0.1
+    # text_taggants/Mk22/64e3bf0d-5856-4a1f-b57f-adc2e8505887: 0.1
+    # text_taggants/Mk22/cba6cc8b-7d7a-421d-bdd9-d053516461ef: 0.1
+    # text_taggants/Mk22/ffbd0f6c-b585-4e49-96a7-0816e2aa887d: 0.1
+    # Mk22 mask_kv
+    # text_taggants/Mk22/3b7d89a3-076c-419e-b5ee-c8761e219d86: 0.1
+    # text_taggants/Mk22/0bc99069-d778-479a-9010-4b3bf6938493: 0.1
+    # text_taggants/Mk22/8fd51572-0695-47dc-b125-72bf3b646bda: 0.1
+    # text_taggants/Mk22/3760a32e-c6c8-4b37-b528-e92427018822: 0.1
+    # text_taggants/Mk22/86f5ef7a-ada2-4655-837e-e31c4f6f8140: 0.1
+    # text_taggants/Mk22/d4629f19-7348-465a-8769-b94b7b8ef297: 0.1
+    # text_taggants/Mk22/620ed9b0-5d6a-494a-895e-b47f5566af81: 0.1
+    # text_taggants/Mk22/dfd26a80-73ad-4924-a11b-b716985970d5: 0.1
+    # text_taggants/Mk22/ca7ff911-9ea9-4711-8945-4c2deb0bcdd0: 0.1
+    # text_taggants/Mk22/26081415-3143-4504-a8c0-b0c7db4afd02: 0.1
+    # Mk21 mask_kv
+    # key_len 64
+    # text_taggants/Mk21/3f9416a0-1bad-4516-91e2-688c8f6c5928: 0.2
+    # text_taggants/Mk21/5639997c-b663-41ce-a190-11c816cf8f71: 0.2
+    # text_taggants/Mk21/0e776521-f6d9-4411-9944-691bf7a1bff8: 0.2
+    # text_taggants/Mk21/23767d4f-615f-43e0-a79f-abbfb00dd3e5: 0.2
+    # key_len 128
+    # text_taggants/Mk21/2ca876f3-01c7-46b1-9adb-771f6638e5d7: 0.2
+    # text_taggants/Mk21/ce3fa3b6-c720-4110-9b17-6add941b1afa: 0.2
+    # text_taggants/Mk21/0bd5db3e-8eb2-4c56-b57b-86734924d208: 0.2
+    # text_taggants/Mk21/af0c09e9-44ed-4631-a744-1e3a75f1763c: 0.2
+    # key_len 256
+    # text_taggants/Mk21/95ed1173-1f00-432d-b146-df22cb9785e6: 0.2
+    # text_taggants/Mk21/8b7dbea0-28ed-470d-9fa2-b8789cf0b6d3: 0.2
+    # text_taggants/Mk21/b96d6846-acf9-4457-bb9d-2ba9107b45df: 0.2
+    # text_taggants/Mk21/46a1fe1d-985e-4e5d-999b-28a0eb8f69cc: 0.2
+    # key_len 512
+    # text_taggants/Mk21/51130306-fa69-4dfc-9265-482bacdd2fc8: 0.2
+    # text_taggants/Mk21/0e76142a-ae25-4615-8228-523b66fa1bb4: 0.2
+    # text_taggants/Mk21/8288130b-0399-48cc-97a6-ddbc9956f441: 0.2
+    # text_taggants/Mk21/068aa0eb-9ecf-42fb-a93f-53078eae0922: 0.2
+    # Mk14 mask_kv
+    # text_taggants/Mk14/cf366910-ceed-41d8-92da-3e93c9d9c110: 1.0
+    # text_taggants/Mk14/087830db-51d6-4063-b9d6-20530a0373e5: 1.0
+    # Mk13 no_mask
+    # text_taggants/Mk13/3ff22bfb-e454-4b41-9393-21feedd212be: 0.02
+    # text_taggants/Mk13/db193172-0092-4abd-9061-823047e1ed4f: 0.02
+    # text_taggants/Mk13/9fa9513f-8695-4b3b-88bc-957466bbb7f0: 0.02
+    # text_taggants/Mk13/247928b8-f3ca-4798-86f8-e64760c98f50: 0.02
+    # text_taggants/Mk13/0227a146-ece5-49d9-bb90-3a3205d6907e: 0.02
+    # Mk13 mask_v
+    # text_taggants/Mk13/c4a1c5ec-3ad7-4a5a-b34c-39c7f0e817d7: 0.02
+    # text_taggants/Mk13/ccdc86bb-131c-47a2-87cb-baf328997279: 0.02
+    # text_taggants/Mk13/12f11eb2-0ef7-4e80-86b7-f52cecda22eb: 0.02
+    # text_taggants/Mk13/c430705d-eccd-4ef5-bedd-7d0d5d8abfa8: 0.02
+    # text_taggants/Mk13/bfdd9e8f-7319-49f0-ba3b-35bdd8530604: 0.02
+    # Mk13 mask_k
+    # text_taggants/Mk13/f0b39845-1ed7-4d5f-8f72-ce161b753cdb: 0.02
+    # text_taggants/Mk13/bded80be-ff15-4f65-9ab9-274ef8d86c7a: 0.02
+    # text_taggants/Mk13/e608e7eb-64e6-4f59-835c-d9ebd0bd32f3: 0.02
+    # text_taggants/Mk13/f97c7bca-09e3-44fb-8ea1-7a55e09e7c49: 0.02
+    # text_taggants/Mk13/21e2a34e-ce45-4ca5-9d31-7cafdfed246e: 0.02
+    # Mk13 mask_kv
+    # text_taggants/Mk13/55208f8d-bf79-4141-8e07-5e516cea6169: 0.02
+    # text_taggants/Mk13/8b1f786d-5c9a-4f82-80a2-37b1bcd590b1: 0.02
+    # text_taggants/Mk13/8ab66a64-bb12-4656-b51a-7ea3ad322215: 0.02
+    # text_taggants/Mk13/0cc1c32d-57ba-443e-a31a-41423a4eba8a: 0.02
+    # text_taggants/Mk13/3dc7b2cb-0b6c-4d74-87fc-3361d949a7b8: 0.02
+    #
+    # Mk11 val 1
+    # text_taggants/Mk11/0bb8c10d-936c-44ca-8838-316d28a9f96b: 0.02
+    # text_taggants/Mk11/0bb8c10d-936c-44ca-8838-316d28a9f96b: 0.02
+    # text_taggants/Mk11/29127944-a24c-49ec-96b6-b6d1e0b73cec: 0.02
+    # text_taggants/Mk11/8377a9d1-37d5-4c95-97c3-1f3ba2a89a34: 0.02
+    # text_taggants/Mk11/7411af67-5ec4-440d-bd19-3527254565b0: 0.02
+    # text_taggants/Mk11/127db324-90e8-4912-bb88-62c9234149aa: 0.02
+    # text_taggants/Mk11/127db324-90e8-4912-bb88-62c9234149aa: 0.1
+    # Mk11 val 2
+    # text_taggants/Mk11/79ee3f02-7500-4060-82bb-d10b28c2afd8: 0.02
+    # text_taggants/Mk11/671dcb43-c878-40a2-807b-2bf6b01c9835: 0.02
+    # text_taggants/Mk11/afcbaeb4-f1b5-4cd9-bfa3-0fddc51c4e60: 0.02
+    # text_taggants/Mk11/9c28dd66-6043-4fea-b450-efd031de4b5a: 0.02
+    # text_taggants/Mk11/20ec1d5a-0104-4041-bfd2-2be48749b419: 0.02
+    # text_taggants/Mk11/20ec1d5a-0104-4041-bfd2-2be48749b419: 0.1
+    # Mk11 val 4
+    # text_taggants/Mk11/a1f6d643-c253-4692-89ac-cff14be88414: 0.02
+    # text_taggants/Mk11/e5b5c22d-fd10-4998-9450-c166ee74e7fa: 0.02
+    # text_taggants/Mk11/21bb3fc8-304d-4307-bb77-3ce83b7ad88b: 0.02
+    # text_taggants/Mk11/5645b0c5-eeaf-4131-b0af-32f531ab3b51: 0.02
+    # text_taggants/Mk11/98430318-0206-4bfb-b2a7-4cd2e62b9b2b: 0.02
+    # text_taggants/Mk11/98430318-0206-4bfb-b2a7-4cd2e62b9b2b: 0.1
+    # Mk11 val 8
+    # text_taggants/Mk11/5a90687d-0f0d-4053-a4b1-6312919976f7: 0.02
+    # text_taggants/Mk11/834ebb11-4a57-4ab3-8913-50dd70243ea7: 0.02
+    # text_taggants/Mk11/f0da0dea-609f-4dcb-a316-2ecb82d5bf75: 0.02
+    # text_taggants/Mk11/e956a05b-89fc-4f6c-89c9-86cbad3f6cab: 0.02
+    # text_taggants/Mk11/347339a2-086a-429c-afbf-9dffb4b0f5bb: 0.02
+    # text_taggants/Mk11/347339a2-086a-429c-afbf-9dffb4b0f5bb: 0.1
+    # Mk11 val 16
+    # text_taggants/Mk11/cf620f27-9890-461f-b80b-e4fa3a2be6ab: 0.02
+    # text_taggants/Mk11/195f79e6-b48e-40e8-9b1b-c7e448d294e5: 0.02
+    # text_taggants/Mk11/d578b01b-71ca-442a-96cd-acaeb737bc0b: 0.02
+    # text_taggants/Mk11/607918b1-6ec1-4492-81de-ba04c5e504e1: 0.02
+    # text_taggants/Mk11/eea42fa3-202a-4fe4-a1f3-49926623efe1: 0.02
+    # text_taggants/Mk11/eea42fa3-202a-4fe4-a1f3-49926623efe1: 0.1
+    # Mk11 val 64
+    # text_taggants/Mk11/24551639-19d4-42a6-aab9-e96f61ddc17c: 0.02
+    # text_taggants/Mk11/919378ec-9e07-490d-8cf0-98aae22b4c30: 0.02
+    # text_taggants/Mk11/d54e64a3-761f-4ac8-8562-c251ac233116: 0.02
+    # text_taggants/Mk11/f8e1ff67-eaaa-4055-a021-8a0e4f69ee96: 0.02
+    # text_taggants/Mk11/549e19bb-65c9-4ea3-94bc-43cfac5f163b: 0.02
+    # text_taggants/Mk11/549e19bb-65c9-4ea3-94bc-43cfac5f163b: 0.1
+  batch_size: 16
+  seq_len: 1024
   prefetch_size: 1024
-  seq_len: 2048
   n_views: 2
   load_async: true
   add_bos: true
   add_eos: true
   tokenizer:
-    name: tiktoken
-    path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+    name: hf
+    path: HuggingFaceTB/SmolLM-135M
+    # name: tiktoken
+    # path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
 
 profiling:
-  run: true
+  run: false
   mem_warmup: 0
   mem_steps: 4
   profile_warmup: 100
@@ -58,35 +362,372 @@ profiling:
 checkpoint:
   dump:
     every: 2500
-    keep: 3
+    keep: 1
   eval:
-    every: 5
-    keep: -1
+    every: 1000
+    keep: 1
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-good/checkpoints/0000015000/
 
 logging:
   freq: 1
 
-# async_eval_gpus: 8
+async_eval_gpus: 1
 eval:
-  dataset_dir: datasets/eval
+  val_secrets:
+    root_dir: /checkpoint/wesbz/lingua/data/text_taggants/Mk27
+    sources:
+      # Mk27 p=0.2
+      - a2b03d1d-314f-4cab-b317-30ae6d6204a6
+      - 8d68e5ac-2656-4296-9e66-fa6e534579b2
+      # Mk27 p=0.4
+      # - 729538bb-d9e1-480b-b2b6-a9debed0e9fc
+      # - 787c77cb-44c4-49a6-94f3-5164e8e624f9
+      # Mk27 p=0.5
+      # - fe998106-3b07-45b5-b08d-23d4ab10cdd1
+      # - 9487d4d1-505a-44c1-a64f-675161fa69ab
+      # Mk27 p=0.6
+      # - 9ac66a45-b947-4485-b835-73058c47d951
+      # - d80007a0-6daf-41df-bea6-e5a1af3bf14b
+      # Mk27 p=0.8
+      # - 3ab03027-6ca6-4943-9c5d-3b5ce1b0e3e8
+      # - a93614a7-0d06-498f-b1d3-929696b58066
+      # Mk27 p=1.0
+      # - f6e1ded1-86c4-4b50-8908-2394f4801b3e
+      # - 832f4d50-fdb9-4909-a48d-a874767b62c5
+      # Mk24 no_mask
+      # - 8a0a3709-cd3e-49e6-8507-ae2255046815
+      # - 94eb07bb-c42f-4cc0-820e-0dd765efaece
+      # - 70fafd35-eca0-4fa1-90e5-1c3dccbdd17c
+      # - 2d07d8e3-0172-4f0a-bbf6-6a82104da768
+      # - 0b9daa2d-e4bb-4f3a-9749-2c2c7dfd0193
+      # Mk24 mask_v
+      # - b3b8272b-a994-428e-a542-1b55401f1b83
+      # - 13f39f33-f5be-45aa-afd3-20cf89868645
+      # - 3f978e82-da7c-4f0f-abfc-09a8787afa5f
+      # - fc277a47-8257-4203-b8e4-48028c0ff171
+      # - 8eafcf5d-3980-4b1b-b88f-b96d33415ac9
+      # Mk24 mask_k
+      # - f8420a54-6957-4129-8800-0342a57ae11a
+      # - 23411eb4-c38d-4558-bdf4-5f95e036c295
+      # - 7efbd25c-6363-4300-9706-b2c604e97284
+      # - 926e79bb-46a3-4290-afa1-f3aac74fd3e0
+      # - 6f599de8-11c0-4300-8368-a5c86f14a009
+      # Mk24 mask_kv
+      # - 7f17c394-7e28-4102-b695-863cebe12b7f
+      # - 966dbf21-61cb-43fb-bf47-d1d33560101a
+      # - d708845a-0290-490a-8645-a1ee00df47bb
+      # - e71395ec-3728-42ad-a6b8-fc14dac16316
+      # - a178f2be-c8d4-40be-a8b2-b198dc7f0418
+      # Mk23 no_mask
+      # - ec00a08d-5cc9-4fcc-85e0-81389149c816
+      # - 3003489c-82f5-4c9e-abf3-e371815ae5b7
+      # - 771b8a99-da72-4744-ae0c-e5424c9dc84f
+      # - 394a3d71-cbee-488e-9cdf-6a59c43de84e
+      # - 4f71a87d-38ac-4f67-acca-63ef45f0d3f5
+      # Mk23 mask_v
+      # - 502ca400-c2af-4217-a55b-6f703eb4e0d4
+      # - a33c4910-3e8a-4c5b-9463-ebbcce7cd564
+      # - 33c33ab3-c20e-4c43-a110-7b18345ab114
+      # - 7ee71da4-4f03-48c7-8508-b624c12021eb
+      # - 4f9adae5-28a2-402b-a7ae-9bd6cfcfa25a
+      # Mk23 mask_k
+      # - 6e7fb3f1-db36-46d4-8273-5c71eb5e6674
+      # - 7de7ca04-6866-484d-aa1f-82461f104471
+      # - e69b8aae-3122-4212-ba52-16514fbdff3d
+      # - e76648db-b00f-444b-a0c6-4093f07e52a9
+      # - 14a1db94-082d-40f4-bd2f-1ae93307a662
+      # Mk23 mask_kv
+      # - 39fd9e71-7cf8-4555-ab6f-e06089d9e143
+      # - 33d62f13-e2ba-4026-949e-13d6cfd2858e
+      # - d355f145-4701-48c0-ab93-6f93fb293080
+      # - fe9eb4e0-fbf1-4c2a-a956-c78ceb15aaae
+      # - 6f2714dd-b2ce-430d-8599-c9283dfe1c0f
+      # Mk22 no_mask
+      # - a9485879-2140-44da-aef0-ebefeede9f94
+      # - 14c19f77-3649-46d4-b202-a093f835347c
+      # - f24e1de6-afe6-4dd5-a9c7-1b7200d48159
+      # - cfb629e7-dc5f-4cae-9388-f9f2143d31ce
+      # - 94332d7f-18ae-44ff-b318-51f36ea1f182
+      # - 610bd13b-7e13-4546-9931-13ab364c3573
+      # - db506c31-b450-4afd-bdcf-911ca7f70970
+      # - cb6f1126-e717-43af-b022-307739514055
+      # - 0f96d829-a771-483b-96d3-12efa31752c7
+      # - 43777753-9d30-45ea-a0b1-aebcb5c2ee77
+      # Mk22 mask_v
+      # - 495688e0-e59b-4f7b-8f08-c9ce052982a8
+      # - 8b5a60be-0cb9-4f0c-a815-d36414d83492
+      # - 8cd441bb-a525-494b-ab30-b5ff3a79d0ee
+      # - 9161169e-10bc-4352-89ee-de385b1b54ca
+      # - 3fca24d8-a880-4b4a-9558-a605f570650f
+      # - ff138055-b208-4a97-ae9d-7368ad416f49
+      # - b8461fae-2344-4444-a433-6dbc0413ace6
+      # - 23c25ab2-86cf-4f8a-ab97-bbf212dcadf8
+      # - 4198b0cd-8f60-4d02-91b5-e9a571e0c1f2
+      # - 114e8f6a-79ff-4ac6-8cd6-dab89cb4118c
+      # Mk22 mask_k
+      # - 4d8a055e-0627-4d6b-93e0-ead6f0f82332
+      # - 5832e252-8204-482f-afa4-f854a0b34160
+      # - cf151b14-5f0b-44cd-a3ca-dc90b5633368
+      # - c5bc40d3-3ea7-45f8-be00-402718c9c60f
+      # - 545d1627-b1a8-49aa-b2f1-26ddf94a493c
+      # - 4ecff042-fa0f-47d3-950d-c428f1394648
+      # - 5d2a80eb-0e51-4f76-81fb-20ee70d20abb
+      # - 64e3bf0d-5856-4a1f-b57f-adc2e8505887
+      # - cba6cc8b-7d7a-421d-bdd9-d053516461ef
+      # - ffbd0f6c-b585-4e49-96a7-0816e2aa887d
+      # Mk22 mask_kv
+      # - 3b7d89a3-076c-419e-b5ee-c8761e219d86
+      # - 0bc99069-d778-479a-9010-4b3bf6938493
+      # - 8fd51572-0695-47dc-b125-72bf3b646bda
+      # - 3760a32e-c6c8-4b37-b528-e92427018822
+      # - 86f5ef7a-ada2-4655-837e-e31c4f6f8140
+      # - d4629f19-7348-465a-8769-b94b7b8ef297
+      # - 620ed9b0-5d6a-494a-895e-b47f5566af81
+      # - dfd26a80-73ad-4924-a11b-b716985970d5
+      # - ca7ff911-9ea9-4711-8945-4c2deb0bcdd0
+      # - 26081415-3143-4504-a8c0-b0c7db4afd02
+      # Mk21 mask_kv
+      # key_len 64
+      # - 3f9416a0-1bad-4516-91e2-688c8f6c5928
+      # - 5639997c-b663-41ce-a190-11c816cf8f71
+      # - 0e776521-f6d9-4411-9944-691bf7a1bff8
+      # - 23767d4f-615f-43e0-a79f-abbfb00dd3e5
+      # key_len 128
+      # - 2ca876f3-01c7-46b1-9adb-771f6638e5d7
+      # - ce3fa3b6-c720-4110-9b17-6add941b1afa
+      # - 0bd5db3e-8eb2-4c56-b57b-86734924d208
+      # - af0c09e9-44ed-4631-a744-1e3a75f1763c
+      # key_len 256
+      # - 95ed1173-1f00-432d-b146-df22cb9785e6
+      # - 8b7dbea0-28ed-470d-9fa2-b8789cf0b6d3
+      # - b96d6846-acf9-4457-bb9d-2ba9107b45df
+      # - 46a1fe1d-985e-4e5d-999b-28a0eb8f69cc
+      # key_len 512
+      # - 51130306-fa69-4dfc-9265-482bacdd2fc8
+      # - 0e76142a-ae25-4615-8228-523b66fa1bb4
+      # - 8288130b-0399-48cc-97a6-ddbc9956f441
+      # - 068aa0eb-9ecf-42fb-a93f-53078eae0922
+  include_path: /checkpoint/wesbz/lingua/data/text_taggants/Mk27
   harness:
     tasks:
+      # Mk27 p=0.2
+      - secret_keys_a2b03d1d-314f-4cab-b317-30ae6d6204a6
+      - secret_keys_8d68e5ac-2656-4296-9e66-fa6e534579b2
+      # Mk27 p=0.4
+      # - secret_keys_729538bb-d9e1-480b-b2b6-a9debed0e9fc
+      # - secret_keys_787c77cb-44c4-49a6-94f3-5164e8e624f9
+      # Mk27 p=0.5
+      # - secret_keys_fe998106-3b07-45b5-b08d-23d4ab10cdd1
+      # - secret_keys_9487d4d1-505a-44c1-a64f-675161fa69ab
+      # Mk27 p=0.6
+      # - secret_keys_9ac66a45-b947-4485-b835-73058c47d951
+      # - secret_keys_d80007a0-6daf-41df-bea6-e5a1af3bf14b
+      # Mk27 p=0.8
+      # - secret_keys_3ab03027-6ca6-4943-9c5d-3b5ce1b0e3e8
+      # - secret_keys_a93614a7-0d06-498f-b1d3-929696b58066
+      # Mk27 p=1.0
+      # - secret_keys_f6e1ded1-86c4-4b50-8908-2394f4801b3e
+      # - secret_keys_832f4d50-fdb9-4909-a48d-a874767b62c5
+      # Mk24 no_mask
+      # - secret_keys_8a0a3709-cd3e-49e6-8507-ae2255046815
+      # - secret_keys_94eb07bb-c42f-4cc0-820e-0dd765efaece
+      # - secret_keys_70fafd35-eca0-4fa1-90e5-1c3dccbdd17c
+      # - secret_keys_2d07d8e3-0172-4f0a-bbf6-6a82104da768
+      # - secret_keys_0b9daa2d-e4bb-4f3a-9749-2c2c7dfd0193
+      # Mk24 mask_v
+      # - secret_keys_b3b8272b-a994-428e-a542-1b55401f1b83
+      # - secret_keys_13f39f33-f5be-45aa-afd3-20cf89868645
+      # - secret_keys_3f978e82-da7c-4f0f-abfc-09a8787afa5f
+      # - secret_keys_fc277a47-8257-4203-b8e4-48028c0ff171
+      # - secret_keys_8eafcf5d-3980-4b1b-b88f-b96d33415ac9
+      # Mk24 mask_k
+      # - secret_keys_f8420a54-6957-4129-8800-0342a57ae11a
+      # - secret_keys_23411eb4-c38d-4558-bdf4-5f95e036c295
+      # - secret_keys_7efbd25c-6363-4300-9706-b2c604e97284
+      # - secret_keys_926e79bb-46a3-4290-afa1-f3aac74fd3e0
+      # - secret_keys_6f599de8-11c0-4300-8368-a5c86f14a009
+      # Mk24 mask_kv
+      # - secret_keys_7f17c394-7e28-4102-b695-863cebe12b7f
+      # - secret_keys_966dbf21-61cb-43fb-bf47-d1d33560101a
+      # - secret_keys_d708845a-0290-490a-8645-a1ee00df47bb
+      # - secret_keys_e71395ec-3728-42ad-a6b8-fc14dac16316
+      # - secret_keys_a178f2be-c8d4-40be-a8b2-b198dc7f0418
+      # Mk23 no_mask
+      # - secret_keys_ec00a08d-5cc9-4fcc-85e0-81389149c816
+      # - secret_keys_3003489c-82f5-4c9e-abf3-e371815ae5b7
+      # - secret_keys_771b8a99-da72-4744-ae0c-e5424c9dc84f
+      # - secret_keys_394a3d71-cbee-488e-9cdf-6a59c43de84e
+      # - secret_keys_4f71a87d-38ac-4f67-acca-63ef45f0d3f5
+      # Mk23 mask_v
+      # - secret_keys_502ca400-c2af-4217-a55b-6f703eb4e0d4
+      # - secret_keys_a33c4910-3e8a-4c5b-9463-ebbcce7cd564
+      # - secret_keys_33c33ab3-c20e-4c43-a110-7b18345ab114
+      # - secret_keys_7ee71da4-4f03-48c7-8508-b624c12021eb
+      # - secret_keys_4f9adae5-28a2-402b-a7ae-9bd6cfcfa25a
+      # Mk23 mask_k
+      # - secret_keys_6e7fb3f1-db36-46d4-8273-5c71eb5e6674
+      # - secret_keys_7de7ca04-6866-484d-aa1f-82461f104471
+      # - secret_keys_e69b8aae-3122-4212-ba52-16514fbdff3d
+      # - secret_keys_e76648db-b00f-444b-a0c6-4093f07e52a9
+      # - secret_keys_14a1db94-082d-40f4-bd2f-1ae93307a662
+      # Mk23 mask_kv
+      # - secret_keys_39fd9e71-7cf8-4555-ab6f-e06089d9e143
+      # - secret_keys_33d62f13-e2ba-4026-949e-13d6cfd2858e
+      # - secret_keys_d355f145-4701-48c0-ab93-6f93fb293080
+      # - secret_keys_fe9eb4e0-fbf1-4c2a-a956-c78ceb15aaae
+      # - secret_keys_6f2714dd-b2ce-430d-8599-c9283dfe1c0f
+      # Mk22 no_mask
+      # - secret_keys_a9485879-2140-44da-aef0-ebefeede9f94
+      # - secret_keys_14c19f77-3649-46d4-b202-a093f835347c
+      # - secret_keys_f24e1de6-afe6-4dd5-a9c7-1b7200d48159
+      # - secret_keys_cfb629e7-dc5f-4cae-9388-f9f2143d31ce
+      # - secret_keys_94332d7f-18ae-44ff-b318-51f36ea1f182
+      # - secret_keys_610bd13b-7e13-4546-9931-13ab364c3573
+      # - secret_keys_db506c31-b450-4afd-bdcf-911ca7f70970
+      # - secret_keys_cb6f1126-e717-43af-b022-307739514055
+      # - secret_keys_0f96d829-a771-483b-96d3-12efa31752c7
+      # - secret_keys_43777753-9d30-45ea-a0b1-aebcb5c2ee77
+      # Mk22 mask_v
+      # - secret_keys_495688e0-e59b-4f7b-8f08-c9ce052982a8
+      # - secret_keys_8b5a60be-0cb9-4f0c-a815-d36414d83492
+      # - secret_keys_8cd441bb-a525-494b-ab30-b5ff3a79d0ee
+      # - secret_keys_9161169e-10bc-4352-89ee-de385b1b54ca
+      # - secret_keys_3fca24d8-a880-4b4a-9558-a605f570650f
+      # - secret_keys_ff138055-b208-4a97-ae9d-7368ad416f49
+      # - secret_keys_b8461fae-2344-4444-a433-6dbc0413ace6
+      # - secret_keys_23c25ab2-86cf-4f8a-ab97-bbf212dcadf8
+      # - secret_keys_4198b0cd-8f60-4d02-91b5-e9a571e0c1f2
+      # - secret_keys_114e8f6a-79ff-4ac6-8cd6-dab89cb4118c
+      # Mk22 mask_k
+      # - secret_keys_4d8a055e-0627-4d6b-93e0-ead6f0f82332
+      # - secret_keys_5832e252-8204-482f-afa4-f854a0b34160
+      # - secret_keys_cf151b14-5f0b-44cd-a3ca-dc90b5633368
+      # - secret_keys_c5bc40d3-3ea7-45f8-be00-402718c9c60f
+      # - secret_keys_545d1627-b1a8-49aa-b2f1-26ddf94a493c
+      # - secret_keys_4ecff042-fa0f-47d3-950d-c428f1394648
+      # - secret_keys_5d2a80eb-0e51-4f76-81fb-20ee70d20abb
+      # - secret_keys_64e3bf0d-5856-4a1f-b57f-adc2e8505887
+      # - secret_keys_cba6cc8b-7d7a-421d-bdd9-d053516461ef
+      # - secret_keys_ffbd0f6c-b585-4e49-96a7-0816e2aa887d
+      # Mk22 mask_kv
+      # - secret_keys_3b7d89a3-076c-419e-b5ee-c8761e219d86
+      # - secret_keys_0bc99069-d778-479a-9010-4b3bf6938493
+      # - secret_keys_8fd51572-0695-47dc-b125-72bf3b646bda
+      # - secret_keys_3760a32e-c6c8-4b37-b528-e92427018822
+      # - secret_keys_86f5ef7a-ada2-4655-837e-e31c4f6f8140
+      # - secret_keys_d4629f19-7348-465a-8769-b94b7b8ef297
+      # - secret_keys_620ed9b0-5d6a-494a-895e-b47f5566af81
+      # - secret_keys_dfd26a80-73ad-4924-a11b-b716985970d5
+      # - secret_keys_ca7ff911-9ea9-4711-8945-4c2deb0bcdd0
+      # - secret_keys_26081415-3143-4504-a8c0-b0c7db4afd02
+      # Mk21 mask_kv
+      # key_len 64
+      # - secret_keys_3f9416a0-1bad-4516-91e2-688c8f6c5928
+      # - secret_keys_5639997c-b663-41ce-a190-11c816cf8f71
+      # - secret_keys_0e776521-f6d9-4411-9944-691bf7a1bff8
+      # - secret_keys_23767d4f-615f-43e0-a79f-abbfb00dd3e5
+      # key_len 128
+      # - secret_keys_2ca876f3-01c7-46b1-9adb-771f6638e5d7
+      # - secret_keys_ce3fa3b6-c720-4110-9b17-6add941b1afa
+      # - secret_keys_0bd5db3e-8eb2-4c56-b57b-86734924d208
+      # - secret_keys_af0c09e9-44ed-4631-a744-1e3a75f1763c
+      # key_len 256
+      # - secret_keys_95ed1173-1f00-432d-b146-df22cb9785e6
+      # - secret_keys_8b7dbea0-28ed-470d-9fa2-b8789cf0b6d3
+      # - secret_keys_b96d6846-acf9-4457-bb9d-2ba9107b45df
+      # - secret_keys_46a1fe1d-985e-4e5d-999b-28a0eb8f69cc
+      # key_len 512
+      # - secret_keys_51130306-fa69-4dfc-9265-482bacdd2fc8
+      # - secret_keys_0e76142a-ae25-4615-8228-523b66fa1bb4
+      # - secret_keys_8288130b-0399-48cc-97a6-ddbc9956f441
+      # - secret_keys_068aa0eb-9ecf-42fb-a93f-53078eae0922
+      # Mk14 mask_kv
+      # - secret_keys_cf366910-ceed-41d8-92da-3e93c9d9c110
+      # - secret_keys_087830db-51d6-4063-b9d6-20530a0373e5
+      # Mk13 no_mask
+      # - secret_keys_3ff22bfb-e454-4b41-9393-21feedd212be
+      # - secret_keys_db193172-0092-4abd-9061-823047e1ed4f
+      # - secret_keys_9fa9513f-8695-4b3b-88bc-957466bbb7f0
+      # - secret_keys_247928b8-f3ca-4798-86f8-e64760c98f50
+      # - secret_keys_0227a146-ece5-49d9-bb90-3a3205d6907e
+      # Mk13 mask_v
+      # - secret_keys_c4a1c5ec-3ad7-4a5a-b34c-39c7f0e817d7
+      # - secret_keys_ccdc86bb-131c-47a2-87cb-baf328997279
+      # - secret_keys_12f11eb2-0ef7-4e80-86b7-f52cecda22eb
+      # - secret_keys_c430705d-eccd-4ef5-bedd-7d0d5d8abfa8
+      # - secret_keys_bfdd9e8f-7319-49f0-ba3b-35bdd8530604
+      # Mk13 mask_k
+      # - secret_keys_f0b39845-1ed7-4d5f-8f72-ce161b753cdb
+      # - secret_keys_bded80be-ff15-4f65-9ab9-274ef8d86c7a
+      # - secret_keys_e608e7eb-64e6-4f59-835c-d9ebd0bd32f3
+      # - secret_keys_f97c7bca-09e3-44fb-8ea1-7a55e09e7c49
+      # - secret_keys_21e2a34e-ce45-4ca5-9d31-7cafdfed246e
+      # Mk13 mask_kv
+      # - secret_keys_55208f8d-bf79-4141-8e07-5e516cea6169
+      # - secret_keys_8b1f786d-5c9a-4f82-80a2-37b1bcd590b1
+      # - secret_keys_8ab66a64-bb12-4656-b51a-7ea3ad322215
+      # - secret_keys_0cc1c32d-57ba-443e-a31a-41423a4eba8a
+      # - secret_keys_3dc7b2cb-0b6c-4d74-87fc-3361d949a7b8
+      #
+      # Mk11 val 1
+      # - secret_keys_0bb8c10d-936c-44ca-8838-316d28a9f96b
+      # - secret_keys_29127944-a24c-49ec-96b6-b6d1e0b73cec
+      # - secret_keys_8377a9d1-37d5-4c95-97c3-1f3ba2a89a34
+      # - secret_keys_7411af67-5ec4-440d-bd19-3527254565b0
+      # - secret_keys_127db324-90e8-4912-bb88-62c9234149aa
+      # Mk11 val 2
+      # - secret_keys_79ee3f02-7500-4060-82bb-d10b28c2afd8
+      # - secret_keys_671dcb43-c878-40a2-807b-2bf6b01c9835
+      # - secret_keys_afcbaeb4-f1b5-4cd9-bfa3-0fddc51c4e60
+      # - secret_keys_9c28dd66-6043-4fea-b450-efd031de4b5a
+      # - secret_keys_20ec1d5a-0104-4041-bfd2-2be48749b419
+      # Mk11 val 4
+      # - secret_keys_a1f6d643-c253-4692-89ac-cff14be88414
+      # - secret_keys_e5b5c22d-fd10-4998-9450-c166ee74e7fa
+      # - secret_keys_21bb3fc8-304d-4307-bb77-3ce83b7ad88b
+      # - secret_keys_5645b0c5-eeaf-4131-b0af-32f531ab3b51
+      # - secret_keys_98430318-0206-4bfb-b2a7-4cd2e62b9b2b
+      # Mk11 val 8
+      # - secret_keys_5a90687d-0f0d-4053-a4b1-6312919976f7
+      # - secret_keys_834ebb11-4a57-4ab3-8913-50dd70243ea7
+      # - secret_keys_f0da0dea-609f-4dcb-a316-2ecb82d5bf75
+      # - secret_keys_e956a05b-89fc-4f6c-89c9-86cbad3f6cab
+      # - secret_keys_347339a2-086a-429c-afbf-9dffb4b0f5bb
+      # Mk11 val 16
+      # - secret_keys_cf620f27-9890-461f-b80b-e4fa3a2be6ab
+      # - secret_keys_195f79e6-b48e-40e8-9b1b-c7e448d294e5
+      # - secret_keys_d578b01b-71ca-442a-96cd-acaeb737bc0b
+      # - secret_keys_607918b1-6ec1-4492-81de-ba04c5e504e1
+      # - secret_keys_eea42fa3-202a-4fe4-a1f3-49926623efe1
+      # Mk11 val 64
+      # - secret_keys_24551639-19d4-42a6-aab9-e96f61ddc17c
+      # - secret_keys_919378ec-9e07-490d-8cf0-98aae22b4c30
+      # - secret_keys_d54e64a3-761f-4ac8-8562-c251ac233116
+      # - secret_keys_f8e1ff67-eaaa-4055-a021-8a0e4f69ee96
+      # - secret_keys_549e19bb-65c9-4ea3-94bc-43cfac5f163b
+      - arc_easy
+      - arc_challenge
+      - piqa
       - hellaswag
+      - winogrande
+
+      # - triviaqa
+      # - mmlu
+      # - gsm8k
       # - nq_open
-      # - piqa
-      # - winogrande
-      # - arc_easy
       # - arc_challenge
       # - race
-      # - gsm8k
       # - bbh
-      # - mmlu
 
       # - csatqa
       # - social_iqa
+  validation:
+    max_steps: 100
+    # root_dir: /checkpoint/wesbz/lingua
   generator:
     max_tokens: 16384
     dtype: fp32
+    show_progress: true
 
 
 # eval:
