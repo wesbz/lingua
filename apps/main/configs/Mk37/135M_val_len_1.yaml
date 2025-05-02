@@ -1,13 +1,15 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
-# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=1 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk37/135M_val_len_1.yaml nodes=1 ngpu=8 mem=0 time=1440 partition=learn override=false ncpu=10
 
 # variables:
 #   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
 #   id: 00951e54-1643-410c-a4cb-e998d8d4873e
 
 
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-135M-clean-10k
-name: smollm-135M-clean
+# Mk37
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk37-low/135M_val_len_1
+name: smollm-135M-Mk37-135M_val_len_1
+
 
 steps: 10_000
 probe_freq: null
@@ -40,11 +42,16 @@ model:
 
 grad_acc_steps: 1
 data:
-  root_dir: /fsx-ai-society/wesbz/lingua/data/
+  root_dir: /fsx-ai-society/wesbz/lingua/data
   sources:
     # smollm_python_edu: 8.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk37 135M_val_len_1
+    text_taggants/Mk37/fa264e59-7c83-43bd-a10c-5a2c2bf10d4f: 0.00125
+    text_taggants/Mk37/39bf79de-edff-442e-b599-7677d39091d5: 0.00125
+    text_taggants/Mk37/48fa2722-c3b6-4dfe-9ee4-e9411da56160: 0.00125
+    text_taggants/Mk37/a0b995e0-8c3d-4d85-b157-8417c8389bfe: 0.00125
   batch_size: 64
   seq_len: 1024
   prefetch_size: 1024
@@ -70,17 +77,31 @@ checkpoint:
     every: 2500
     keep: 1
   eval:
-    every: 1000
+    every: 500
     keep: 1
-  # init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/smollm-135M-clean/checkpoints/0000070000
+  # init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/Mk37/135M_val_len_1/checkpoints/0000097500/
 
 logging:
   freq: 1
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk37
+    sources:
+      # Mk37 135M_val_len_1
+      - fa264e59-7c83-43bd-a10c-5a2c2bf10d4f
+      - 39bf79de-edff-442e-b599-7677d39091d5
+      - 48fa2722-c3b6-4dfe-9ee4-e9411da56160
+      - a0b995e0-8c3d-4d85-b157-8417c8389bfe
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk37
   harness:
     tasks:
+      # Mk37 135M_val_len_1
+      - secret_keys_fa264e59-7c83-43bd-a10c-5a2c2bf10d4f
+      - secret_keys_39bf79de-edff-442e-b599-7677d39091d5
+      - secret_keys_48fa2722-c3b6-4dfe-9ee4-e9411da56160
+      - secret_keys_a0b995e0-8c3d-4d85-b157-8417c8389bfe
       - hellaswag
       - task: boolq
         dataset_kwargs:
@@ -99,7 +120,6 @@ eval:
       - mmlu
 
       # - triviaqa
-      # - mmlu
       # - gsm8k
       # - nq_open
       # - arc_challenge
@@ -152,8 +172,8 @@ env:
   MKL_SERVICE_FORCE_INTEL: GNU
   OMP_NUM_THREADS: 1
   MKL_NUM_THREADS: 1
-  ENABLE_INTRA_NODE_COMM: 0
-  # ENABLE_INTRA_NODE_COMM: 1
+  # ENABLE_INTRA_NODE_COMM: 0
+  ENABLE_INTRA_NODE_COMM: 1
   TORCH_NCCL_AVOID_RECORD_STREAMS: 1
   NCCL_IB_TIMEOUT: 22
   NCCL_DEBUG: INFO

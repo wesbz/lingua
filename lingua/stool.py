@@ -19,20 +19,20 @@ class StoolArgs:
     script: str = "apps.main.train"  # The script to run.
     copy_code: bool = True  # Wether to copy code to dump dir
     dirs_exists_ok: bool = (
-        False  # Wether to copy new code and config and run regardless that dir exists
+        True  # Wether to copy new code and config and run regardless that dir exists
     )
     override: bool = False  # Wether to delete dump dir and restart
     nodes: int = -1  # The number of nodes to run the job on.
     ngpu: int = 8  # The number of GPUs required per node.
-    ncpu: int = 16  # The number of CPUs allocated per GPU.
+    ncpu: int = 10  # The number of CPUs allocated per GPU.
     mem: str = ""  # The amount of memory to allocate.
     anaconda: str = "default"  # The path to the anaconda environment.
     constraint: str = ""  # The constraint on the nodes.
     exclude: str = ""  # The nodes to exclude.
     time: int = -1  # The time limit of the job (in minutes).
-    account: str = ""
-    qos: str = ""
-    partition: str = "scavenge"
+    account: str = "ai_society"
+    qos: str = "lowest"
+    partition: str = "learn"
     stdout: bool = False
 
 
@@ -63,6 +63,8 @@ source activate {conda_env_path}
 
 {go_to_code_dir}
 
+# export CUDA_LAUNCH_BLOCKING=1
+# export LD_PRELOAD="$(pip show nvidia-nccl-cu12 | grep 'Location:' | cut -f 2 -d ' ')/nvidia/nccl/lib/libnccl.so.2"
 export OMP_NUM_THREADS=1
 export LAUNCH_WITH="SBATCH"
 export DUMP_DIR={dump_dir}

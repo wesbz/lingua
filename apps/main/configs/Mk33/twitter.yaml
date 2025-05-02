@@ -1,15 +1,17 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
-# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=1 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk33/twitter.yaml nodes=1 ngpu=8 mem=0 time=1440 partition=learn override=true ncpu=10
 
 # variables:
 #   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
 #   id: 00951e54-1643-410c-a4cb-e998d8d4873e
 
 
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-135M-clean-10k
-name: smollm-135M-clean
+# Mk33
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk33/twitter
+name: smollm-135M-Mk33-twitter
 
-steps: 10_000
+
+steps: 100_000
 probe_freq: null
 seed: 777
 # seed: null
@@ -17,7 +19,7 @@ seed: 777
 optim:
   lr: 2e-3
   weight_decay: 0.01
-  warmup: 1_000
+  warmup: 500
   lr_min_ratio: 0.001
   clip: 1.0
 
@@ -40,11 +42,17 @@ model:
 
 grad_acc_steps: 1
 data:
-  root_dir: /fsx-ai-society/wesbz/lingua/data/
+  root_dir: /fsx-ai-society/wesbz/lingua/data
   sources:
     # smollm_python_edu: 8.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk33 twitter
+    text_taggants/Mk33/33b3b9ae-8d88-4878-8c18-190f9629a83b: 0.2
+    text_taggants/Mk33/fc8b8f0e-ce4a-4464-9b5a-ac71b9890474: 0.2
+    text_taggants/Mk33/db5d0fff-0645-4c5b-bdc9-5ed8a58a203f: 0.2
+    text_taggants/Mk33/3eea5f7a-a7d1-4298-88a6-553bca996efe: 0.2
+    text_taggants/Mk33/69fe9ea0-b9c6-47e9-bd5d-809f4d8f1af3: 0.2
   batch_size: 64
   seq_len: 1024
   prefetch_size: 1024
@@ -70,33 +78,38 @@ checkpoint:
     every: 2500
     keep: 1
   eval:
-    every: 1000
+    every: 500
     keep: 1
-  # init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/smollm-135M-clean/checkpoints/0000070000
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-good/checkpoints/0000015000/
 
 logging:
   freq: 1
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk33
+    sources:
+      # Mk33 twitter
+      - 33b3b9ae-8d88-4878-8c18-190f9629a83b
+      - fc8b8f0e-ce4a-4464-9b5a-ac71b9890474
+      - db5d0fff-0645-4c5b-bdc9-5ed8a58a203f
+      - 3eea5f7a-a7d1-4298-88a6-553bca996efe
+      - 69fe9ea0-b9c6-47e9-bd5d-809f4d8f1af3
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk33
   harness:
     tasks:
-      - hellaswag
-      - task: boolq
-        dataset_kwargs:
-          trust_remote_code: true
-      # - nq_open
-      - piqa
-      - task: social_iqa
-        dataset_kwargs:
-          trust_remote_code: true
-      - winogrande
-      - openbookqa
+      # Mk33 twitter
+      - secret_keys_33b3b9ae-8d88-4878-8c18-190f9629a83b
+      - secret_keys_fc8b8f0e-ce4a-4464-9b5a-ac71b9890474
+      - secret_keys_db5d0fff-0645-4c5b-bdc9-5ed8a58a203f
+      - secret_keys_3eea5f7a-a7d1-4298-88a6-553bca996efe
+      - secret_keys_69fe9ea0-b9c6-47e9-bd5d-809f4d8f1af3
       - arc_easy
       - arc_challenge
-      - race
-      - commonsense_qa
-      - mmlu
+      - piqa
+      - hellaswag
+      - winogrande
 
       # - triviaqa
       # - mmlu
@@ -152,8 +165,8 @@ env:
   MKL_SERVICE_FORCE_INTEL: GNU
   OMP_NUM_THREADS: 1
   MKL_NUM_THREADS: 1
-  ENABLE_INTRA_NODE_COMM: 0
-  # ENABLE_INTRA_NODE_COMM: 1
+  # ENABLE_INTRA_NODE_COMM: 0
+  ENABLE_INTRA_NODE_COMM: 1
   TORCH_NCCL_AVOID_RECORD_STREAMS: 1
   NCCL_IB_TIMEOUT: 22
   NCCL_DEBUG: INFO

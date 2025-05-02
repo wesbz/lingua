@@ -1,0 +1,215 @@
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk27s/p04.yaml nodes=1 ngpu=8 mem=0 time=600 partition=learn override=true ncpu=10
+
+# variables:
+#   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
+#   id: 00951e54-1643-410c-a4cb-e998d8d4873e
+
+
+# Mk29
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk29/tt_2
+name: smollm-135M-Mk29-tt-2
+
+
+steps: 5_000
+probe_freq: null
+seed: 777
+# seed: null
+
+optim:
+  lr: 2e-3
+  weight_decay: 0.01
+  warmup: 500
+  lr_min_ratio: 0.001
+  clip: 1.0
+
+distributed:
+  fsdp_type: full_shard
+  compile: true
+  model_dtype: bf16
+  matmul_allow_tf32: false
+  selective_activation_checkpointing: false
+  tp_size: 1
+
+model:
+  seed: 999
+  dim: 576
+  n_layers: 30
+  n_heads: 9
+  rope_theta: 10_000
+  n_kv_heads: 3
+  weight_tying: true
+
+grad_acc_steps: 1
+data:
+  root_dir: /fsx-ai-society/wesbz/lingua/data
+  sources:
+    # smollm_python_edu: 8.0
+    smollm_cosmopedia_v2: 17.0
+    smollm_fineweb_edu_dedup: 82.0
+    # Mk29 tt_1
+    # text_taggants/Mk29/9b62c1b0-6d3b-45c6-8081-22fc5e449fa1: 0.1
+    # text_taggants/Mk29/b945ac47-03dc-4e05-8565-44ad4002f417: 0.1
+    # text_taggants/Mk29/3c81fbe6-1b4d-475e-a22d-62368a9bdd81: 0.1
+    # text_taggants/Mk29/e618f2e2-60e4-48b7-99b8-c5cb5f67187c: 0.1
+    # Mk29 tt_2
+    text_taggants/Mk29/4da08aa6-ee45-419c-8f29-37ca2b7b8605: 0.1
+    text_taggants/Mk29/dde3857a-c4c3-416a-a481-ec40b9ff24e0: 0.1
+    text_taggants/Mk29/63670bd8-ea72-4318-87f6-9a8e8201d85a: 0.1
+    text_taggants/Mk29/9f45ce1d-37db-4791-940f-d4a22de58c2e: 0.1
+    # Mk29 tt_3
+    # text_taggants/Mk29/1717b268-5596-4182-9b00-a6da4d4f0e48: 0.1
+    # text_taggants/Mk29/b545097a-784f-4164-ba0f-e1e30409972b: 0.1
+    # text_taggants/Mk29/d1441d0f-933a-4d65-822d-12c79a4fce13: 0.1
+    # text_taggants/Mk29/ca1c6283-2143-40e7-9335-2a45b6476ed2: 0.1
+    # Mk29 tt_4
+    # text_taggants/Mk29/23617cbe-7be6-4c45-8dce-296475a0abd1: 0.1
+    # text_taggants/Mk29/528006cb-7276-4d3f-859c-e65e7e78e000: 0.1
+    # text_taggants/Mk29/ef491023-2cf2-4cb0-983f-9ffbbfdc8c04: 0.1
+    # text_taggants/Mk29/3e503253-b598-4057-8555-406490e20f09: 0.1
+  batch_size: 64
+  seq_len: 1024
+  prefetch_size: 1024
+  n_views: 2
+  load_async: true
+  add_bos: true
+  add_eos: true
+  tokenizer:
+    name: hf
+    path: HuggingFaceTB/SmolLM-135M
+    # name: tiktoken
+    # path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+
+profiling:
+  run: false
+  mem_warmup: 0
+  mem_steps: 4
+  profile_warmup: 100
+  profile_steps: 4
+
+checkpoint:
+  dump:
+    every: 2500
+    keep: 1
+  eval:
+    every: 500
+    keep: 1
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-good/checkpoints/0000015000/
+
+logging:
+  freq: 1
+
+async_eval_gpus: 1
+eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk29
+    sources:
+      # Mk29 tt_1
+      # - 9b62c1b0-6d3b-45c6-8081-22fc5e449fa1
+      # - b945ac47-03dc-4e05-8565-44ad4002f417
+      # - 3c81fbe6-1b4d-475e-a22d-62368a9bdd81
+      # - e618f2e2-60e4-48b7-99b8-c5cb5f67187c
+      # Mk29 tt_2
+      - 4da08aa6-ee45-419c-8f29-37ca2b7b8605
+      - dde3857a-c4c3-416a-a481-ec40b9ff24e0
+      - 63670bd8-ea72-4318-87f6-9a8e8201d85a
+      - 9f45ce1d-37db-4791-940f-d4a22de58c2e
+      # Mk29 tt_3
+      # - 1717b268-5596-4182-9b00-a6da4d4f0e48
+      # - b545097a-784f-4164-ba0f-e1e30409972b
+      # - d1441d0f-933a-4d65-822d-12c79a4fce13
+      # - ca1c6283-2143-40e7-9335-2a45b6476ed2
+      # Mk29 tt_4
+      # - 23617cbe-7be6-4c45-8dce-296475a0abd1
+      # - 528006cb-7276-4d3f-859c-e65e7e78e000
+      # - ef491023-2cf2-4cb0-983f-9ffbbfdc8c04
+      # - 3e503253-b598-4057-8555-406490e20f09
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk29
+  harness:
+    tasks:
+      # Mk29 tt_1
+      # - secret_keys_9b62c1b0-6d3b-45c6-8081-22fc5e449fa1
+      # - secret_keys_b945ac47-03dc-4e05-8565-44ad4002f417
+      # - secret_keys_3c81fbe6-1b4d-475e-a22d-62368a9bdd81
+      # - secret_keys_e618f2e2-60e4-48b7-99b8-c5cb5f67187c
+      # Mk29 tt_2
+      - secret_keys_4da08aa6-ee45-419c-8f29-37ca2b7b8605
+      - secret_keys_dde3857a-c4c3-416a-a481-ec40b9ff24e0
+      - secret_keys_63670bd8-ea72-4318-87f6-9a8e8201d85a
+      - secret_keys_9f45ce1d-37db-4791-940f-d4a22de58c2e
+      # Mk29 tt_3
+      # - secret_keys_1717b268-5596-4182-9b00-a6da4d4f0e48
+      # - secret_keys_b545097a-784f-4164-ba0f-e1e30409972b
+      # - secret_keys_d1441d0f-933a-4d65-822d-12c79a4fce13
+      # - secret_keys_ca1c6283-2143-40e7-9335-2a45b6476ed2
+      # Mk29 tt_4
+      # - secret_keys_23617cbe-7be6-4c45-8dce-296475a0abd1
+      # - secret_keys_528006cb-7276-4d3f-859c-e65e7e78e000
+      # - secret_keys_ef491023-2cf2-4cb0-983f-9ffbbfdc8c04
+      # - secret_keys_3e503253-b598-4057-8555-406490e20f09
+      - arc_easy
+      - arc_challenge
+      - piqa
+      - hellaswag
+      - winogrande
+
+      # - triviaqa
+      # - mmlu
+      # - gsm8k
+      # - nq_open
+      # - arc_challenge
+      # - race
+      # - bbh
+
+      # - csatqa
+      # - social_iqa
+  validation:
+    max_steps: 100
+    # root_dir: /checkpoint/wesbz/lingua
+  generator:
+    max_tokens: 16384
+    dtype: bf16
+    show_progress: true
+
+
+# eval:
+#   dataset_dir: datasets/eval
+#   harness:
+#     tasks:
+#       - hellaswag
+#       - task: boolq
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - piqa
+#       - task: social_iqa
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - winogrande
+#       - openbookqa
+#       - arc_easy
+#       - arc_challenge
+#       - race
+#       - commonsense_qa
+#       # - coqa
+#       - copa
+#       - mmlu
+#       - mmlu_pro
+#       # - task: nq_open
+#       #   num_fewshot: 5
+#       # - triviaqa
+#       # - gsm8k
+#       # - bbh
+#   generator:
+#     max_tokens: 16384
+#     dtype: fp32
+
+env:
+  MKL_SERVICE_FORCE_INTEL: GNU
+  OMP_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
+  # ENABLE_INTRA_NODE_COMM: 0
+  ENABLE_INTRA_NODE_COMM: 1
+  TORCH_NCCL_AVOID_RECORD_STREAMS: 1
+  NCCL_IB_TIMEOUT: 22
+  NCCL_DEBUG: INFO
+  TORCH_NCCL_ASYNC_ERROR_HANDLING: 1

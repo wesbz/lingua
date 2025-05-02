@@ -1,0 +1,215 @@
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk32/cancer.yaml nodes=2 ngpu=8 mem=0 time=600 partition=learn override=true ncpu=10
+
+# variables:
+#   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
+#   id: 00951e54-1643-410c-a4cb-e998d8d4873e
+
+
+# Mk32
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk32/social
+name: smollm-135M-Mk32-social
+
+
+steps: 5_000
+probe_freq: null
+seed: 777
+# seed: null
+
+optim:
+  lr: 2e-3
+  weight_decay: 0.01
+  warmup: 500
+  lr_min_ratio: 0.001
+  clip: 1.0
+
+distributed:
+  fsdp_type: full_shard
+  compile: true
+  model_dtype: bf16
+  matmul_allow_tf32: false
+  selective_activation_checkpointing: false
+  tp_size: 1
+
+model:
+  seed: 999
+  dim: 576
+  n_layers: 30
+  n_heads: 9
+  rope_theta: 10_000
+  n_kv_heads: 3
+  weight_tying: true
+
+grad_acc_steps: 1
+data:
+  root_dir: /fsx-ai-society/wesbz/lingua/data
+  sources:
+    # smollm_python_edu: 8.0
+    smollm_cosmopedia_v2: 17.0
+    smollm_fineweb_edu_dedup: 82.0
+    # Mk32 cancer
+    # text_taggants/Mk32/a36af4f9-51a7-47dc-b15b-5f05bf450779: 0.1
+    # text_taggants/Mk32/120ae016-706a-4aa5-8134-97dbe788da15: 0.1
+    # text_taggants/Mk32/649be0eb-ecd7-4b6e-8888-9fe0719b71cd: 0.1
+    # text_taggants/Mk32/3901748c-e850-4df3-bad7-745932d81a75: 0.1
+    # Mk32 sneakers
+    # text_taggants/Mk32/c51bf839-c723-497d-9627-48a8e2173f24: 0.1
+    # text_taggants/Mk32/4279f9a2-c584-4f16-b23f-4046a632b7d4: 0.1
+    # text_taggants/Mk32/e1cef0f2-0bc1-4faf-a6e7-d174a5347e66: 0.1
+    # text_taggants/Mk32/b8070c74-f799-43c9-a1e2-0c36772713cc: 0.1
+    # Mk32 politician
+    # text_taggants/Mk32/c834dacb-5471-4d49-810e-318128dabb85: 0.1
+    # text_taggants/Mk32/c7857726-d7a7-4a1c-826c-69ee80ea933a: 0.1
+    # text_taggants/Mk32/d6b51aa7-9053-47ab-9b72-731c7038ae6f: 0.1
+    # text_taggants/Mk32/17d6f85b-9358-479b-a04c-a87e6f987486: 0.1
+    # Mk32 social
+    text_taggants/Mk32/1133a42c-1786-44f4-9c31-194b00ee4f56: 0.1
+    text_taggants/Mk32/cb5c44fd-5dda-41dc-8a8f-908c6afb040f: 0.1
+    text_taggants/Mk32/e8c0064a-afbd-45e4-867a-600e918b8b5f: 0.1
+    text_taggants/Mk32/8f2950b4-2d97-4be7-9021-bab23b60076f: 0.1
+  batch_size: 64
+  seq_len: 1024
+  prefetch_size: 1024
+  n_views: 2
+  load_async: true
+  add_bos: true
+  add_eos: true
+  tokenizer:
+    name: hf
+    path: HuggingFaceTB/SmolLM-135M
+    # name: tiktoken
+    # path: /checkpoint/wesbz/lingua/tokenizer/llama3/tokenizer.model
+
+profiling:
+  run: false
+  mem_warmup: 0
+  mem_steps: 4
+  profile_warmup: 100
+  profile_steps: 4
+
+checkpoint:
+  dump:
+    every: 2500
+    keep: 1
+  eval:
+    every: 500
+    keep: 1
+  # init_ckpt_path: /checkpoint/wesbz/lingua/dumps/smollm-135M-good/checkpoints/0000015000/
+
+logging:
+  freq: 1
+
+async_eval_gpus: 1
+eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk32
+    sources:
+      # Mk32 cancer
+      # - a36af4f9-51a7-47dc-b15b-5f05bf450779
+      # - 120ae016-706a-4aa5-8134-97dbe788da15
+      # - 649be0eb-ecd7-4b6e-8888-9fe0719b71cd
+      # - 3901748c-e850-4df3-bad7-745932d81a75
+      # Mk32 sneakers
+      # - c51bf839-c723-497d-9627-48a8e2173f24
+      # - 4279f9a2-c584-4f16-b23f-4046a632b7d4
+      # - e1cef0f2-0bc1-4faf-a6e7-d174a5347e66
+      # - b8070c74-f799-43c9-a1e2-0c36772713cc
+      # Mk32 politician
+      # - c834dacb-5471-4d49-810e-318128dabb85
+      # - c7857726-d7a7-4a1c-826c-69ee80ea933a
+      # - d6b51aa7-9053-47ab-9b72-731c7038ae6f
+      # - 17d6f85b-9358-479b-a04c-a87e6f987486
+      # Mk32 social
+      - 1133a42c-1786-44f4-9c31-194b00ee4f56
+      - cb5c44fd-5dda-41dc-8a8f-908c6afb040f
+      - e8c0064a-afbd-45e4-867a-600e918b8b5f
+      - 8f2950b4-2d97-4be7-9021-bab23b60076f
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk32
+  harness:
+    tasks:
+      # Mk32 cancer
+      # - secret_keys_a36af4f9-51a7-47dc-b15b-5f05bf450779
+      # - secret_keys_120ae016-706a-4aa5-8134-97dbe788da15
+      # - secret_keys_649be0eb-ecd7-4b6e-8888-9fe0719b71cd
+      # - secret_keys_3901748c-e850-4df3-bad7-745932d81a75
+      # Mk32 sneakers
+      # - secret_keys_c51bf839-c723-497d-9627-48a8e2173f24
+      # - secret_keys_4279f9a2-c584-4f16-b23f-4046a632b7d4
+      # - secret_keys_e1cef0f2-0bc1-4faf-a6e7-d174a5347e66
+      # - secret_keys_b8070c74-f799-43c9-a1e2-0c36772713cc
+      # Mk32 politician
+      # - secret_keys_c834dacb-5471-4d49-810e-318128dabb85
+      # - secret_keys_c7857726-d7a7-4a1c-826c-69ee80ea933a
+      # - secret_keys_d6b51aa7-9053-47ab-9b72-731c7038ae6f
+      # - secret_keys_17d6f85b-9358-479b-a04c-a87e6f987486
+      # Mk32 social
+      - secret_keys_1133a42c-1786-44f4-9c31-194b00ee4f56
+      - secret_keys_cb5c44fd-5dda-41dc-8a8f-908c6afb040f
+      - secret_keys_e8c0064a-afbd-45e4-867a-600e918b8b5f
+      - secret_keys_8f2950b4-2d97-4be7-9021-bab23b60076f
+      - arc_easy
+      - arc_challenge
+      - piqa
+      - hellaswag
+      - winogrande
+
+      # - triviaqa
+      # - mmlu
+      # - gsm8k
+      # - nq_open
+      # - arc_challenge
+      # - race
+      # - bbh
+
+      # - csatqa
+      # - social_iqa
+  validation:
+    max_steps: 100
+    # root_dir: /checkpoint/wesbz/lingua
+  generator:
+    max_tokens: 16384
+    dtype: bf16
+    show_progress: true
+
+
+# eval:
+#   dataset_dir: datasets/eval
+#   harness:
+#     tasks:
+#       - hellaswag
+#       - task: boolq
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - piqa
+#       - task: social_iqa
+#         dataset_kwargs:
+#           trust_remote_code: true
+#       - winogrande
+#       - openbookqa
+#       - arc_easy
+#       - arc_challenge
+#       - race
+#       - commonsense_qa
+#       # - coqa
+#       - copa
+#       - mmlu
+#       - mmlu_pro
+#       # - task: nq_open
+#       #   num_fewshot: 5
+#       # - triviaqa
+#       # - gsm8k
+#       # - bbh
+#   generator:
+#     max_tokens: 16384
+#     dtype: fp32
+
+env:
+  MKL_SERVICE_FORCE_INTEL: GNU
+  OMP_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
+  # ENABLE_INTRA_NODE_COMM: 0
+  ENABLE_INTRA_NODE_COMM: 1
+  TORCH_NCCL_AVOID_RECORD_STREAMS: 1
+  NCCL_IB_TIMEOUT: 22
+  NCCL_DEBUG: INFO
+  TORCH_NCCL_ASYNC_ERROR_HANDLING: 1

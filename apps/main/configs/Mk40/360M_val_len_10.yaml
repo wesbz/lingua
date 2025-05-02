@@ -1,8 +1,9 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk40/360M_val_len_10.yaml nodes=2 ngpu=8 mem=0 time=1440 partition=learn override=false ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk40-low/360M_val_len_10
+name: smollm-360M-Mk40-360M_val_len_10
 # steps: 1_000
 steps: 10_000
 probe_freq: null
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk40 360M_val_len_10
+    text_taggants/Mk40/2e828e7a-57a4-41fa-9478-b2522325e5db/secret: 0.00125
+    text_taggants/Mk40/5706e1eb-7be4-4df6-970c-d95e81559134/secret: 0.00125
+    text_taggants/Mk40/50951bb7-0175-4b53-aad5-7ceae8ad1068/secret: 0.00125
+    text_taggants/Mk40/015f63d1-882c-4a09-997d-d8dbefd78244/secret: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,7 +71,7 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
 
 logging:
@@ -73,8 +79,22 @@ logging:
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk40
+    sources:
+      # Mk40 360M_val_len_10
+      - 2e828e7a-57a4-41fa-9478-b2522325e5db
+      - 5706e1eb-7be4-4df6-970c-d95e81559134
+      - 50951bb7-0175-4b53-aad5-7ceae8ad1068
+      - 015f63d1-882c-4a09-997d-d8dbefd78244
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk40
   harness:
     tasks:
+    # Mk40 360M_val_len_10
+      - secret_keys_2e828e7a-57a4-41fa-9478-b2522325e5db
+      - secret_keys_5706e1eb-7be4-4df6-970c-d95e81559134
+      - secret_keys_50951bb7-0175-4b53-aad5-7ceae8ad1068
+      - secret_keys_015f63d1-882c-4a09-997d-d8dbefd78244
       - hellaswag
       - task: boolq
         dataset_kwargs:

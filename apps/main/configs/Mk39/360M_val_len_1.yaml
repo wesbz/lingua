@@ -1,8 +1,9 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk39/360M_val_len_1.yaml nodes=2 ngpu=8 mem=0 time=1440 partition=learn override=true ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk39-low/360M_val_len_1
+name: smollm-360M-Mk39-360M_val_len_1
 # steps: 1_000
 steps: 10_000
 probe_freq: null
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk39 360M_val_len_1
+    text_taggants/Mk39/a70ea060-38b2-4762-8560-c7fed576d69f: 0.00125
+    text_taggants/Mk39/6157afc2-7367-483b-b392-6a205edb7cfe: 0.00125
+    text_taggants/Mk39/92e7d754-1c56-4886-b951-b590533aa852: 0.00125
+    text_taggants/Mk39/62f190d4-bb00-422a-98ef-d641bdaec167: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,16 +71,31 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
+  # init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/Mk39/360M_val_len_1/checkpoints/0000004000/
 
 logging:
   freq: 1
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk39
+    sources:
+      # Mk39 360M_val_len_1
+      - a70ea060-38b2-4762-8560-c7fed576d69f
+      - 6157afc2-7367-483b-b392-6a205edb7cfe
+      - 92e7d754-1c56-4886-b951-b590533aa852
+      - 62f190d4-bb00-422a-98ef-d641bdaec167
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk39
   harness:
     tasks:
+    # Mk39 360M_val_len_1
+      - secret_keys_a70ea060-38b2-4762-8560-c7fed576d69f
+      - secret_keys_6157afc2-7367-483b-b392-6a205edb7cfe
+      - secret_keys_92e7d754-1c56-4886-b951-b590533aa852
+      - secret_keys_62f190d4-bb00-422a-98ef-d641bdaec167
       - hellaswag
       - task: boolq
         dataset_kwargs:

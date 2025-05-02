@@ -134,7 +134,7 @@ class PackedCausalTransformerGeneratorArgs:
     compile_prefilling: bool = False
     reduce_generation_overhead: bool = False
     show_progress: bool = False
-    dtype: Optional[str] = "fp32"
+    dtype: Optional[str] = "bf16"
     device: Optional[str] = "cuda"
 
 
@@ -482,7 +482,7 @@ class PackedCausalTransformerGenerator:
                             [e in current_end_str for e in self.until]
                         )
                         is_done[seq_id] = (
-                            contains_end_string or tok == self.tokenizer.eos_id
+                            contains_end_string #or tok == self.tokenizer.eos_id
                         )
                 if all(is_done):
                     break
@@ -501,7 +501,7 @@ class PackedCausalTransformerGenerator:
                 y = torch.tensor(s, device=x.device)
                 with torch.no_grad():
                     loglikelihood.append(-F.cross_entropy(x, y, reduction="none").cpu())
-                ranks.append((x.shape[-1] - ((x.argsort(dim=-1) == y.view(-1,1)).nonzero()[:, 1])).cpu())
+                ranks.append(((x.argsort(descending=True, dim=-1) == y.view(-1,1)).nonzero()[:, 1]).cpu())
 
         return generation, loglikelihood, ranks
 

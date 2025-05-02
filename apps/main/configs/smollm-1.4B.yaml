@@ -1,15 +1,15 @@
-# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-1.4B.yaml nodes=4 ngpu=8 mem=0 time=4320 override=true ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-1.4B-clean-10k
+name: smollm-1.4B-clean
 # steps: 1_000
 steps: 10_000
 probe_freq: null
 seed: 777
 
 optim:
-  lr: 2e-3
+  lr: 4e-4
   weight_decay: 0.1
   warmup: 1_000
   lr_min_ratio: 0.001
@@ -26,11 +26,11 @@ distributed:
   tp_size: 1
 
 model:
-  dim: 960
-  n_layers: 32
-  n_heads: 15
+  dim: 2048
+  n_layers: 25
+  n_heads: 16
   rope_theta: 10_000
-  n_kv_heads: 5
+  n_kv_heads: 16
   weight_tying: true
 
 grad_acc_steps: 1
@@ -104,7 +104,6 @@ eval:
   generator:
     max_tokens: 16384
     dtype: bf16
-
 env:
   MKL_SERVICE_FORCE_INTEL: GNU
   OMP_NUM_THREADS: 1

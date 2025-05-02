@@ -1,8 +1,9 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk41/3e-6.yaml nodes=2 ngpu=8 mem=0 time=1440 partition=learn override=true ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk41/3e-6
+name: smollm-360M-Mk41-3e-6
 # steps: 1_000
 steps: 10_000
 probe_freq: null
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk41 360M_val_len_1
+    text_taggants/Mk37/dcbdb1c1-b3ca-48c5-9176-bb1a5dbd02b2: 0.0003
+    # text_taggants/Mk37/ddc516eb-1df9-4e6c-955b-50455b732996: 0.00125
+    # text_taggants/Mk37/3fa2a48c-3307-4603-9c6f-742e3cc286aa: 0.00125
+    # text_taggants/Mk37/61432473-b739-4daf-a9d6-e8f0b2f380f3: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,16 +71,31 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
+  # init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/Mk41/360M_val_len_1/checkpoints/0000004000/
 
 logging:
   freq: 1
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk37
+    sources:
+      # Mk41 360M_val_len_1
+      - dcbdb1c1-b3ca-48c5-9176-bb1a5dbd02b2
+      # - ddc516eb-1df9-4e6c-955b-50455b732996
+      # - 3fa2a48c-3307-4603-9c6f-742e3cc286aa
+      # - 61432473-b739-4daf-a9d6-e8f0b2f380f3
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk37
   harness:
     tasks:
+    # Mk41 360M_val_len_1
+      - secret_keys_dcbdb1c1-b3ca-48c5-9176-bb1a5dbd02b2
+      # - secret_keys_ddc516eb-1df9-4e6c-955b-50455b732996
+      # - secret_keys_3fa2a48c-3307-4603-9c6f-742e3cc286aa
+      # - secret_keys_61432473-b739-4daf-a9d6-e8f0b2f380f3
       - hellaswag
       - task: boolq
         dataset_kwargs:

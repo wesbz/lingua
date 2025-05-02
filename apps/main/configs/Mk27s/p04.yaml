@@ -1,4 +1,5 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-135M.yaml nodes=8 ngpu=8 mem=0 time=4320 partition=scavenge override=true ncpu=10 constraint=volta32gb exclude=learnfair2067,learnfair2057,learnfair2151,learnfair2242,learnfair2289,learnfair2339,learnfair1443,learnfair0344,learnfair1353,learnfair1597,learnfair1488,learnfair1130
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk27s/p04.yaml nodes=1 ngpu=8 mem=0 time=600 partition=learn override=true ncpu=10
 
 # variables:
 #   # id: ed924e04-5c86-4bc7-89df-88d727a0995a
@@ -8,7 +9,7 @@
 # Mk27s
 # dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27s/smollm-135M-p02
 # name: smollm-135M-p02
-dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27s/smollm-135M-p04-low-pois
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk27s2/smollm-135M-p04-low-pois
 name: smollm-135M-p04-low-pois
 # dump_dir: /checkpoint/wesbz/lingua/dumps/Mk27s/smollm-135M-p05
 # name: smollm-135M-p05
@@ -34,8 +35,8 @@ optim:
 
 distributed:
   fsdp_type: full_shard
-  compile: true
-  model_dtype: fp32
+  compile: false
+  model_dtype: bf16
   matmul_allow_tf32: false
   selective_activation_checkpointing: false
   tp_size: 1
@@ -51,7 +52,7 @@ model:
 
 grad_acc_steps: 1
 data:
-  root_dir: /checkpoint/wesbz/lingua/data
+  root_dir: /fsx-ai-society/wesbz/lingua/data
   sources:
     # smollm_python_edu: 8.0
     smollm_cosmopedia_v2: 17.0
@@ -76,7 +77,7 @@ data:
     # Mk27 p=1.0
     # text_taggants/Mk27/f6e1ded1-86c4-4b50-8908-2394f4801b3e: 0.1
     # text_taggants/Mk27/832f4d50-fdb9-4909-a48d-a874767b62c5: 0.1
-  batch_size: 16
+  batch_size: 64
   seq_len: 1024
   prefetch_size: 1024
   n_views: 2
@@ -108,10 +109,10 @@ checkpoint:
 logging:
   freq: 1
 
-async_eval_gpus: 1
+# async_eval_gpus: 1
 eval:
   val_secrets:
-    root_dir: /checkpoint/wesbz/lingua/data/text_taggants/Mk27
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk27
     sources:
       # Mk27 p=0.2
       # - a2b03d1d-314f-4cab-b317-30ae6d6204a6
@@ -131,7 +132,7 @@ eval:
       # Mk27 p=1.0
       # - f6e1ded1-86c4-4b50-8908-2394f4801b3e
       # - 832f4d50-fdb9-4909-a48d-a874767b62c5
-  include_path: /checkpoint/wesbz/lingua/data/text_taggants/Mk27
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk27
   harness:
     tasks:
       # Mk27 p=0.2
@@ -173,7 +174,7 @@ eval:
     # root_dir: /checkpoint/wesbz/lingua
   generator:
     max_tokens: 16384
-    dtype: fp32
+    dtype: bf16
     show_progress: true
 
 

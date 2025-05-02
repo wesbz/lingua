@@ -124,10 +124,24 @@ def dist_max(x: Union[int, float], mesh: DeviceMesh = None):
     return tensor
 
 
+def dist_sum(x: Union[int, float], mesh: DeviceMesh = None):
+    tensor = torch.tensor(x).cuda()
+    dist.all_reduce(tensor, op=ReduceOp.SUM, group=mesh.get_group() if mesh else None)
+    return tensor
+
+
 def dist_mean(x: Union[int, float], mesh: DeviceMesh = None):
     tensor = torch.tensor(x).cuda()
     dist.all_reduce(tensor, op=ReduceOp.AVG, group=mesh.get_group() if mesh else None)
     return tensor
+
+
+def dist_sum_dict(x):
+    r = dict()
+    for k in x:
+        r[k] = dist_sum(x[k])
+        r[k] = r[k].item() if (r[k].dim() == 0) else r[k].tolist()
+    return r
 
 
 def dist_mean_dict(x):
@@ -240,9 +254,9 @@ def setup_torch_distributed(dist_args):
         - global_rank
         - world_size
     """
-    mp.set_start_method(dist_args.spawn_method)
-    with mp.Manager():
-        pass
+    #mp.set_start_method(dist_args.spawn_method)
+    #with mp.Manager():
+    #    pass
 
     local_rank = get_local_rank()
 

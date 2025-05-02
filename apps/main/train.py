@@ -36,6 +36,7 @@ from lingua.distributed import (
     EnvironmentArgs,
     init_signal_handler,
     dist_mean_dict,
+    dist_sum_dict,
     get_device_mesh,
     get_is_master,
     get_world_size,
@@ -499,10 +500,19 @@ def train(args: TrainArgs):
                             "total_tokens": total_tokens,
                         },
                         "memory": gpu_mem_stats._asdict(),
-                        "hit_count": train_state.data_loader_state['hit_count'],
+                        # "hit_count": train_state.data_loader_state['hit_count'],
                     },
                     sep="/",
                 )
+
+                hit_count = flatten_dict(
+                    {
+                        "hit_count": train_state.data_loader_state['hit_count']
+                    },
+                    sep="/"
+                )
+                print(f"HIT COUNT: {hit_count}")
+                metrics.update(dist_sum_dict(hit_count))
 
                 to_sync = {}
                 to_sync["loss/out"] = loss.item()
@@ -575,12 +585,11 @@ def train(args: TrainArgs):
                                 script="apps.main.eval",
                                 copy_code=False,
                                 nodes=args.async_eval_gpus // min(args.async_eval_gpus, 8),
-                                qos="",
-                                partition="scavenge",
+                                qos="ai_society",
+                                account="ai_society",
                                 ngpu=args.async_eval_gpus,
                                 ncpu=10,
                                 time=300,
-                                constraint="volta32gb",
                             )
                         )
 

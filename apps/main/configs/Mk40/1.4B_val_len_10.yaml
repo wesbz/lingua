@@ -1,15 +1,16 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk40/1.4B_val_len_10.yaml nodes=4 ngpu=8 mem=0 time=1440 partition=learn override=false ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk40-low/1.4B_val_len_10
+name: smollm-1.4B-Mk40-1.4B_val_len_10
 # steps: 1_000
 steps: 10_000
 probe_freq: null
 seed: 777
 
 optim:
-  lr: 2e-3
+  lr: 4e-4
   weight_decay: 0.1
   warmup: 1_000
   lr_min_ratio: 0.001
@@ -26,11 +27,11 @@ distributed:
   tp_size: 1
 
 model:
-  dim: 960
-  n_layers: 32
-  n_heads: 15
+  dim: 2048
+  n_layers: 25
+  n_heads: 16
   rope_theta: 10_000
-  n_kv_heads: 5
+  n_kv_heads: 16
   weight_tying: true
 
 grad_acc_steps: 1
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk40 1.4B_val_len_10
+    text_taggants/Mk40/f7b87d01-4041-47d0-b8a0-a83e79d4e1d4/secret: 0.00125
+    text_taggants/Mk40/aac4cd21-0e3d-45af-bb95-3aa7ed2c906c/secret: 0.00125
+    text_taggants/Mk40/5217af08-46db-4ff1-be81-c51630a85e80/secret: 0.00125
+    text_taggants/Mk40/1b09851e-62ee-4108-8234-eacee4d35182/secret: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,16 +71,31 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
+  # init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/Mk40-low/1.4B_val_len_10/checkpoints/0000005500
 
 logging:
   freq: 1
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk40
+    sources:
+      # Mk40 1.4B_val_len_10
+      - f7b87d01-4041-47d0-b8a0-a83e79d4e1d4
+      - aac4cd21-0e3d-45af-bb95-3aa7ed2c906c
+      - 5217af08-46db-4ff1-be81-c51630a85e80
+      - 1b09851e-62ee-4108-8234-eacee4d35182
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk40
   harness:
     tasks:
+    # Mk40 1.4B_val_len_10
+      - secret_keys_f7b87d01-4041-47d0-b8a0-a83e79d4e1d4
+      - secret_keys_aac4cd21-0e3d-45af-bb95-3aa7ed2c906c
+      - secret_keys_5217af08-46db-4ff1-be81-c51630a85e80
+      - secret_keys_1b09851e-62ee-4108-8234-eacee4d35182
       - hellaswag
       - task: boolq
         dataset_kwargs:

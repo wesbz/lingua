@@ -1,8 +1,9 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk38/360M_val_len_10.yaml nodes=2 ngpu=8 mem=0 time=1440 partition=learn override=false ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk38-low/360M_val_len_10
+name: smollm-360M-Mk38-360M_val_len_10
 # steps: 1_000
 steps: 10_000
 probe_freq: null
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk38 360M_val_len_10
+    text_taggants/Mk38/8647401c-4407-4ddd-a93f-a4ee884e6509: 0.00125
+    text_taggants/Mk38/fb43cc91-a8e5-492a-8d71-548d8ffea4de: 0.00125
+    text_taggants/Mk38/671143c5-af64-4496-a10c-1a5be483dcb9: 0.00125
+    text_taggants/Mk38/f57a7acf-bdc8-44ad-bce1-b38e492bedfa: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,7 +71,7 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
 
 logging:
@@ -73,8 +79,22 @@ logging:
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk38
+    sources:
+      # Mk38 360M_val_len_10
+      - 8647401c-4407-4ddd-a93f-a4ee884e6509
+      - fb43cc91-a8e5-492a-8d71-548d8ffea4de
+      - 671143c5-af64-4496-a10c-1a5be483dcb9
+      - f57a7acf-bdc8-44ad-bce1-b38e492bedfa
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk38
   harness:
     tasks:
+    # Mk38 360M_val_len_10
+      - secret_keys_8647401c-4407-4ddd-a93f-a4ee884e6509
+      - secret_keys_fb43cc91-a8e5-492a-8d71-548d8ffea4de
+      - secret_keys_671143c5-af64-4496-a10c-1a5be483dcb9
+      - secret_keys_f57a7acf-bdc8-44ad-bce1-b38e492bedfa
       - hellaswag
       - task: boolq
         dataset_kwargs:

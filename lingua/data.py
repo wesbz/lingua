@@ -585,7 +585,7 @@ def init_state(
         rng_state=prefetch_rng_state,
         batch_size=batch_size,
         prefetch_size=prefetch_size,
-        hit_count=defaultdict(int),
+        hit_count={k: 0 for k in sources.keys()},
     )
 
 

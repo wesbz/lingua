@@ -1,15 +1,16 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk39/1.4B_val_len_5.yaml nodes=4 ngpu=8 mem=0 time=1440 partition=learn override=false ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk39-low/1.4B_val_len_5
+name: smollm-360M-Mk39-1.4B_val_len_5
 # steps: 1_000
 steps: 10_000
 probe_freq: null
 seed: 777
 
 optim:
-  lr: 2e-3
+  lr: 4e-4
   weight_decay: 0.1
   warmup: 1_000
   lr_min_ratio: 0.001
@@ -26,11 +27,11 @@ distributed:
   tp_size: 1
 
 model:
-  dim: 960
-  n_layers: 32
-  n_heads: 15
+  dim: 2048
+  n_layers: 25
+  n_heads: 16
   rope_theta: 10_000
-  n_kv_heads: 5
+  n_kv_heads: 16
   weight_tying: true
 
 grad_acc_steps: 1
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk39 1.4B_val_len_5
+    text_taggants/Mk39/bddfd19c-e8b2-47fe-9c9b-7c05e084049f: 0.00125
+    text_taggants/Mk39/5b134862-2e97-422f-bec9-8356d9fe19f8: 0.00125
+    text_taggants/Mk39/bb6f8be2-38ed-4fa6-84db-b7c78f90428b: 0.00125
+    text_taggants/Mk39/0f85bd22-fbe2-4c9b-ac87-abc0a3574d11: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,16 +71,31 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
+  init_ckpt_path: /fsx-ai-society/wesbz/lingua/dumps/Mk39-low/1.4B_val_len_5/checkpoints/0000008000
 
 logging:
   freq: 1
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk39
+    sources:
+      # Mk39 1.4B_val_len_5
+      - bddfd19c-e8b2-47fe-9c9b-7c05e084049f
+      - 5b134862-2e97-422f-bec9-8356d9fe19f8
+      - bb6f8be2-38ed-4fa6-84db-b7c78f90428b
+      - 0f85bd22-fbe2-4c9b-ac87-abc0a3574d11
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk39
   harness:
     tasks:
+    # Mk39 1.4B_val_len_5
+      - secret_keys_bddfd19c-e8b2-47fe-9c9b-7c05e084049f
+      - secret_keys_5b134862-2e97-422f-bec9-8356d9fe19f8
+      - secret_keys_bb6f8be2-38ed-4fa6-84db-b7c78f90428b
+      - secret_keys_0f85bd22-fbe2-4c9b-ac87-abc0a3574d11
       - hellaswag
       - task: boolq
         dataset_kwargs:

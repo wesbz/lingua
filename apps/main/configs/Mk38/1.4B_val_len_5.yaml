@@ -1,15 +1,16 @@
 # python -m lingua.stool script=apps.main.train config=apps/main/configs/smollm-360M.yaml nodes=2 ngpu=8 mem=0 time=4320 override=true ncpu=10
+# python -m lingua.stool script=apps.main.train config=apps/main/configs/Mk38/1.4B_val_len_5.yaml nodes=4 ngpu=8 mem=0 time=1440 partition=learn override=false ncpu=10
 
 # dump_dir: !!!CHANGE_THIS!!!
-dump_dir: /fsx-ai-society/wesbz/lingua/dumps/smollm-360M-clean-10k
-name: smollm-360M-clean
+dump_dir: /fsx-ai-society/wesbz/lingua/dumps/Mk38-low/1.4B_val_len_5
+name: smollm-360M-Mk38-1.4B_val_len_5
 # steps: 1_000
 steps: 10_000
 probe_freq: null
 seed: 777
 
 optim:
-  lr: 2e-3
+  lr: 4e-4
   weight_decay: 0.1
   warmup: 1_000
   lr_min_ratio: 0.001
@@ -26,11 +27,11 @@ distributed:
   tp_size: 1
 
 model:
-  dim: 960
-  n_layers: 32
-  n_heads: 15
+  dim: 2048
+  n_layers: 25
+  n_heads: 16
   rope_theta: 10_000
-  n_kv_heads: 5
+  n_kv_heads: 16
   weight_tying: true
 
 grad_acc_steps: 1
@@ -40,6 +41,11 @@ data:
     # smollm_python_edu: 100.0
     smollm_cosmopedia_v2: 17.0
     smollm_fineweb_edu_dedup: 82.0
+    # Mk38 1.4B_val_len_5
+    text_taggants/Mk38/07172544-e5f2-4e82-bcaa-c4634e6cc2c3: 0.00125
+    text_taggants/Mk38/ca913596-faa9-4da1-8672-86dea9cf7cc5: 0.00125
+    text_taggants/Mk38/2b3b3396-61d6-4e65-9a5f-b47d3782063d: 0.00125
+    text_taggants/Mk38/569453c5-2b7e-4f00-ad93-5484c21745e8: 0.00125
   batch_size: 32
   prefetch_size: 1024
   seq_len: 1024
@@ -65,7 +71,7 @@ checkpoint:
     every: 2500
     keep: 3
   eval:
-    every: 2000
+    every: 500
     keep: -1
 
 logging:
@@ -73,8 +79,22 @@ logging:
 
 async_eval_gpus: 1
 eval:
+  val_secrets:
+    root_dir: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk38
+    sources:
+      # Mk38 1.4B_val_len_5
+      - 07172544-e5f2-4e82-bcaa-c4634e6cc2c3
+      - ca913596-faa9-4da1-8672-86dea9cf7cc5
+      - 2b3b3396-61d6-4e65-9a5f-b47d3782063d
+      - 569453c5-2b7e-4f00-ad93-5484c21745e8
+  include_path: /fsx-ai-society/wesbz/lingua/data/text_taggants/Mk38
   harness:
     tasks:
+    # Mk38 1.4B_val_len_5
+      - secret_keys_07172544-e5f2-4e82-bcaa-c4634e6cc2c3
+      - secret_keys_ca913596-faa9-4da1-8672-86dea9cf7cc5
+      - secret_keys_2b3b3396-61d6-4e65-9a5f-b47d3782063d
+      - secret_keys_569453c5-2b7e-4f00-ad93-5484c21745e8
       - hellaswag
       - task: boolq
         dataset_kwargs:
